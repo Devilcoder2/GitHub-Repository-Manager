@@ -10,6 +10,7 @@ const App: React.FC = () => {
     return (
         <div style={{ textAlign: 'center' }}>
             <h1>Count: {count}</h1>
+            <p>Testing deployment</p>
             <button onClick={() => dispatch(increment())}>Increment</button>
             <button onClick={() => dispatch(decrement())}>Decrement</button>
         </div>
