@@ -19,11 +19,11 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: '18' # Use the version matching your project
-                  cache: 'npm'
+                  # cache: 'npm'
 
             # Step 3: Install dependencies
             - name: Install dependencies
-              run: cd client && npm ci
+              run:  npm ci
 
             # Step 4: Build the project
             - name: Build project
