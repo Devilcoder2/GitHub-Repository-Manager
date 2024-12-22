@@ -311,6 +311,14 @@ const Settings = () => {
                             Alt + 3
                         </span>
                     </div>
+                    <div className='flex justify-between'>
+                        <span className='text-sm md:text-base text-gray-700'>
+                            Search Repos
+                        </span>
+                        <span className='text-sm md:text-base text-gray-500'>
+                            Alt + S
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

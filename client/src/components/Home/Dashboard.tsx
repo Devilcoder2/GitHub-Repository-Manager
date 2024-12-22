@@ -5,11 +5,12 @@ import {
     MagnifyingGlassIcon,
     PlusIcon,
 } from '@heroicons/react/24/outline';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { SyncLoader } from 'react-spinners';
 import { dateFormatter } from '../../helper.ts';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store.ts';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 // Define a type for the repository objects
 interface Repository {
@@ -37,6 +38,13 @@ const Dashboard = () => {
     const [filterdData, setFilterdData] = useState<Repository[]>([]);
     const [repos, setRepos] = useState<Repository[]>([]);
     const [loadingData, setLoadingData] = useState<boolean>(true);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useHotkeys('alt+s', () => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    });
 
     const isRepoSizeVisible = useSelector(
         (state: RootState) => state.isRepoSizeVisible
@@ -195,6 +203,7 @@ const Dashboard = () => {
                                 />
                                 <input
                                     id={`inputSearch`}
+                                    ref={inputRef}
                                     placeholder={`Search Repositories`}
                                     onChange={handleFilter}
                                     className={`text-xs w-[200px] placeholder:text-gray-700 outline-none`}
