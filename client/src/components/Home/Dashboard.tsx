@@ -8,6 +8,8 @@ import {
 import { ChangeEvent, useEffect, useState } from 'react';
 import { SyncLoader } from 'react-spinners';
 import { dateFormatter } from '../../helper.ts';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store.ts';
 
 // Define a type for the repository objects
 interface Repository {
@@ -35,6 +37,14 @@ const Dashboard = () => {
     const [filterdData, setFilterdData] = useState<Repository[]>([]);
     const [repos, setRepos] = useState<Repository[]>([]);
     const [loadingData, setLoadingData] = useState<boolean>(true);
+
+    const isRepoSizeVisible = useSelector(
+        (state: RootState) => state.isRepoSizeVisible
+    );
+
+    const isTagsVisible = useSelector(
+        (state: RootState) => state.isTagsVisible
+    );
 
     const handleFilter = (e: ChangeEvent<HTMLInputElement>) => {
         console.log(e.target.value);
@@ -176,11 +186,13 @@ const Dashboard = () => {
                                                 className={`flex gap-2 items-center`}
                                             >
                                                 <span>{item.name}</span>
-                                                <span
-                                                    className={`bg-[#EFF8FF] border border-[#B2DDFF] text-primary text-xs px-2 rounded-full`}
-                                                >
-                                                    {item.visibility}
-                                                </span>
+                                                {isTagsVisible && (
+                                                    <span
+                                                        className={`bg-[#EFF8FF] border border-[#B2DDFF] text-primary text-xs px-2 rounded-full`}
+                                                    >
+                                                        {item.visibility}
+                                                    </span>
+                                                )}
                                             </div>
                                             <div
                                                 className={`flex gap-4 md:gap-8 text-sm font-light`}
@@ -193,14 +205,16 @@ const Dashboard = () => {
                                                         className={`bg-[#1570EF] p-1 rounded-full`}
                                                     ></span>
                                                 </span>
-                                                <span
-                                                    className={`flex items-center gap-2`}
-                                                >
-                                                    <CircleStackIcon
-                                                        className={`w-4`}
-                                                    />
-                                                    {item.size} KB
-                                                </span>
+                                                {isRepoSizeVisible && (
+                                                    <span
+                                                        className={`flex items-center gap-2`}
+                                                    >
+                                                        <CircleStackIcon
+                                                            className={`w-4`}
+                                                        />
+                                                        {item.size} KB
+                                                    </span>
+                                                )}
                                                 <span>
                                                     Updated{' '}
                                                     {dateFormatter(

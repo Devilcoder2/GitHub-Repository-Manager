@@ -70,6 +70,23 @@ app.get('/fetch-repos', async (req, res) => {
     }
 });
 
+// Fetch user details (Logged in user)
+app.get('/user', async (req, res) => {
+    try {
+        const response = await axios.get('https://api.github.com/user', {
+            headers: {
+                Authorization: `token ${req.headers.authorization}`,
+            },
+        });
+
+        console.log(response.data); // Log the user details to the console for debugging
+        res.json(response.data); // Send the user details as JSON response
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ error: 'Failed to fetch user details' });
+    }
+});
+
 // Start the server
 const PORT = 5000; // Backend server port
 app.listen(PORT, () => {

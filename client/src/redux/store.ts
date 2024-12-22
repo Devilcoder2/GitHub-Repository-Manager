@@ -1,15 +1,22 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 
-import { countReducer } from './reducers/index';
-import { CountState } from './interfaces/index';
+import {
+    toggleDarkModeReducer,
+    toggleRepoSizeReducer,
+    toggleShowTagReducer,
+} from './reducers/index';
 
 export interface RootState {
-    count: CountState;
+    isRepoSizeVisible: boolean;
+    isDarkModeOn: boolean;
+    isTagsVisible: boolean;
 }
 
 const rootReducer = combineReducers({
-    count: countReducer,
+    isRepoSizeVisible: toggleRepoSizeReducer,
+    isDarkModeOn: toggleDarkModeReducer,
+    isTagsVisible: toggleShowTagReducer,
 });
 
 const store = configureStore({
