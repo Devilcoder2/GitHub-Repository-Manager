@@ -8,10 +8,41 @@ import Dashboard from './components/Home/Dashboard';
 import HowToUse from './components/Home/HowToUse';
 import Layout from './components/Home/Layout';
 import Settings from './components/Home/Settings';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    toggleDarkMode,
+    toggleRepoSize,
+    toggleShowTag,
+} from './redux/actionCreators';
+import store, { RootState } from './redux/store';
 
 function App() {
     const [authenticated, setAuthenticated] = useState(false);
     const [isAuthDone, setIsAuthDone] = useState(false);
+    const dispatch = useDispatch();
+
+    const isRepoSizeVisible = useSelector(
+        (store: RootState) => store.isRepoSizeVisible
+    );
+
+    const isTagsVisible = useSelector(
+        (store: RootState) => store.isTagsVisible
+    );
+
+    const isDarkModeOn = useSelector((store: RootState) => store.isDarkModeOn);
+
+    useHotkeys('alt+r', () => {
+        dispatch(toggleRepoSize(isRepoSizeVisible));
+    });
+
+    useHotkeys('alt+m', () => {
+        dispatch(toggleShowTag(isTagsVisible));
+    });
+
+    useHotkeys('alt+p', () => {
+        dispatch(toggleDarkMode(isDarkModeOn));
+    });
 
     useEffect(() => {
         setAuthenticated(!!localStorage.getItem('accessToken'));
