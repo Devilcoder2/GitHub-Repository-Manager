@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SyncLoader } from 'react-spinners';
 import { RootState } from '../../redux/store';
 import {
+    changeSortingOrder,
     toggleDarkMode,
     toggleRepoSize,
     toggleShowTag,
@@ -31,18 +32,17 @@ interface UserDetails {
 
 const Settings = () => {
     const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-    const [sortOption, setSortOption] = useState('alphabetical'); // Sorting repos option
 
     const isRepoSizeVisible = useSelector(
         (state: RootState) => state.isRepoSizeVisible
     );
-
     const isDarkModeOn = useSelector((state: RootState) => state.isDarkModeOn);
     const isTagsVisible = useSelector(
         (state: RootState) => state.isTagsVisible
     );
+    const sortingOrder = useSelector((state: RootState) => state.sortingOrder);
 
-    console.log(isTagsVisible);
+    console.log(sortingOrder);
 
     const disptach = useDispatch();
 
@@ -241,12 +241,16 @@ const Settings = () => {
                         </span>
                         <select
                             className='bg-gray-100 border border-gray-300 text-sm rounded-md p-2.5 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#1570EF] focus:border-[#1570EF] transition ease-in-out duration-200'
-                            value={sortOption}
-                            onChange={(e) => setSortOption(e.target.value)}
+                            value={sortingOrder}
+                            onChange={(e) =>
+                                disptach(
+                                    changeSortingOrder(Number(e.target.value))
+                                )
+                            }
                         >
-                            <option value='alphabetical'>Alphabetical</option>
-                            <option value='created_on'>Created on</option>
-                            <option value='updated_on'>Updated on</option>
+                            <option value={0}>Alphabetical</option>
+                            <option value={1}>Created on</option>
+                            <option value={2}>Updated on</option>
                         </select>
                     </div>
                 </div>
@@ -280,6 +284,31 @@ const Settings = () => {
                         </span>
                         <span className='text-sm md:text-base text-gray-500'>
                             Alt + M
+                        </span>
+                    </div>
+                    {/* New shortcuts */}
+                    <div className='flex justify-between'>
+                        <span className='text-sm md:text-base text-gray-700'>
+                            Sort Repos Alphabetically
+                        </span>
+                        <span className='text-sm md:text-base text-gray-500'>
+                            Alt + 1
+                        </span>
+                    </div>
+                    <div className='flex justify-between'>
+                        <span className='text-sm md:text-base text-gray-700'>
+                            Sort Repos by Created On
+                        </span>
+                        <span className='text-sm md:text-base text-gray-500'>
+                            Alt + 2
+                        </span>
+                    </div>
+                    <div className='flex justify-between'>
+                        <span className='text-sm md:text-base text-gray-700'>
+                            Sort Repos by Updated On
+                        </span>
+                        <span className='text-sm md:text-base text-gray-500'>
+                            Alt + 3
                         </span>
                     </div>
                 </div>

@@ -1,5 +1,7 @@
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { useDispatch, useSelector } from 'react-redux';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Auth from './components/Auth/Auth';
 import AuthCallback from './components/Auth/AuthCallback';
 import AiCodeReview from './components/Home/AICodeReview';
@@ -8,14 +10,13 @@ import Dashboard from './components/Home/Dashboard';
 import HowToUse from './components/Home/HowToUse';
 import Layout from './components/Home/Layout';
 import Settings from './components/Home/Settings';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { useDispatch, useSelector } from 'react-redux';
 import {
+    changeSortingOrder,
     toggleDarkMode,
     toggleRepoSize,
     toggleShowTag,
 } from './redux/actionCreators';
-import store, { RootState } from './redux/store';
+import { RootState } from './redux/store';
 
 function App() {
     const [authenticated, setAuthenticated] = useState(false);
@@ -42,6 +43,18 @@ function App() {
 
     useHotkeys('alt+p', () => {
         dispatch(toggleDarkMode(isDarkModeOn));
+    });
+
+    useHotkeys('alt+1', () => {
+        dispatch(changeSortingOrder(0));
+    });
+
+    useHotkeys('alt+2', () => {
+        dispatch(changeSortingOrder(1));
+    });
+
+    useHotkeys('alt+3', () => {
+        dispatch(changeSortingOrder(2));
     });
 
     useEffect(() => {

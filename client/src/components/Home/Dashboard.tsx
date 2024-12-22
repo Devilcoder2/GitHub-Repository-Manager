@@ -46,6 +46,40 @@ const Dashboard = () => {
         (state: RootState) => state.isTagsVisible
     );
 
+    const sortingOrder = useSelector((store: RootState) => store.sortingOrder);
+    console.log(sortingOrder);
+
+    useEffect(() => {
+        const sortedData = [...repos];
+
+        switch (sortingOrder) {
+            case 0:
+                // Sort by name alphabetically
+                sortedData.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 1:
+                // Sort by created_at in decreasing order
+                sortedData.sort(
+                    (a, b) =>
+                        new Date(b.created_at).getTime() -
+                        new Date(a.created_at).getTime()
+                );
+                break;
+            case 2:
+                // Sort by updated_at in decreasing order
+                sortedData.sort(
+                    (a, b) =>
+                        new Date(b.updated_at).getTime() -
+                        new Date(a.updated_at).getTime()
+                );
+                break;
+            default:
+                break;
+        }
+
+        setFilterdData(sortedData);
+    }, [sortingOrder, repos]);
+
     const handleFilter = (e: ChangeEvent<HTMLInputElement>) => {
         console.log(e.target.value);
         const value = e.target.value;
