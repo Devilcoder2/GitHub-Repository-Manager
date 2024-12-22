@@ -12,7 +12,11 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
-const SideBar = () => {
+interface SideBarProps {
+    setIsAuthDone: (value: boolean) => void;
+}
+
+const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
     const [isSideBarVisible, setIsSideBarVisible] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [selectedItem, setSelectedItem] = useState<number>(0);
@@ -167,7 +171,13 @@ const SideBar = () => {
                             </span>
                             <span className='ml-3 font-light'>Support</span>
                         </button>
-                        <button className='flex items-center w-full px-4 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100'>
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem('accessToken');
+                                setIsAuthDone(false);
+                            }}
+                            className='flex items-center w-full px-4 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100'
+                        >
                             <span className='flex-shrink-0'>
                                 <ArrowRightStartOnRectangleIcon
                                     className={`w-5`}

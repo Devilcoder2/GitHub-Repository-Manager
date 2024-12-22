@@ -51,10 +51,14 @@ app.get('/auth/github/callback', async (req, res) => {
 
 // Fetch All Repositories (Public & Private)
 app.get('/fetch-repos', async (req, res) => {
+    const perPage = 100; // Number of repositories per page
     try {
         const response = await axios.get('https://api.github.com/user/repos', {
             headers: {
                 Authorization: `token ${req.headers.authorization}`,
+            },
+            params: {
+                per_page: perPage,
             },
         });
 

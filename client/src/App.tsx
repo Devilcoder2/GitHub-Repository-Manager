@@ -1,4 +1,5 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Auth from './components/Auth/Auth';
 import AuthCallback from './components/Auth/AuthCallback';
 import AiCodeReview from './components/Home/AICodeReview';
@@ -9,15 +10,40 @@ import Layout from './components/Home/Layout';
 import Settings from './components/Home/Settings';
 
 function App() {
+    const [authenticated, setAuthenticated] = useState(false);
+    const [isAuthDone, setIsAuthDone] = useState(false);
+
+    useEffect(() => {
+        setAuthenticated(!!localStorage.getItem('accessToken'));
+    }, [isAuthDone]);
+
     return (
         <BrowserRouter>
             <Routes>
-                {/* Auth Route - No Sidebar */}
-                <Route path='/' element={<Auth />} />
-                <Route path='/auth/callback' element={<AuthCallback />} />
+                <Route
+                    path='/'
+                    element={
+                        authenticated ? (
+                            <Navigate to='/dashboard' replace />
+                        ) : (
+                            <Auth />
+                        )
+                    }
+                />
+                <Route
+                    path='/auth/callback'
+                    element={<AuthCallback setIsAuthDone={setIsAuthDone} />}
+                />
 
-                {/* Layout Route - Sidebar is included */}
-                <Route element={<Layout />}>
+                <Route
+                    element={
+                        authenticated ? (
+                            <Layout setIsAuthDone={setIsAuthDone} />
+                        ) : (
+                            <Navigate to='/' replace />
+                        )
+                    }
+                >
                     <Route path='/dashboard' element={<Dashboard />} />
                     <Route path='/settings' element={<Settings />} />
                     <Route path='/ai-code-review' element={<AiCodeReview />} />

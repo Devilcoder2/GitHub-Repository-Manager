@@ -2,7 +2,11 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
 
-const AuthCallback = () => {
+interface AuthCallbackProps {
+    setIsAuthDone: (value: boolean) => void;
+}
+
+const AuthCallback: React.FC<AuthCallbackProps> = ({ setIsAuthDone }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,6 +22,7 @@ const AuthCallback = () => {
                     const data = await response.json();
 
                     if (response.ok) {
+                        setIsAuthDone(true);
                         console.log('Access token:', data.accessToken);
                         localStorage.setItem('accessToken', data.accessToken);
                         navigate('/dashboard');
@@ -34,7 +39,7 @@ const AuthCallback = () => {
         };
 
         fetchAccessToken();
-    }, [navigate]);
+    }, [navigate, setIsAuthDone]);
 
     return (
         <div className='flex justify-center items-center min-h-screen w-full bg-[#FAFAFA]'>

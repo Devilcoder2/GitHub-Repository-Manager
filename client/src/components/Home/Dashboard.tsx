@@ -42,65 +42,70 @@ const Dashboard = () => {
         const filtered = repos.filter(
             (item) =>
                 item.name.toLowerCase().includes(value.toLowerCase()) ||
+                item?.visibility
+                    ?.toLowerCase()
+                    ?.includes(value.toLowerCase()) ||
                 item?.language?.toLowerCase()?.includes(value.toLowerCase())
         );
         setFilterdData(filtered);
     };
 
-    useEffect(() => {
-        const fetchRepositories = async () => {
-            try {
-                const response = await fetch(
-                    'http://localhost:5000/fetch-repos',
-                    {
-                        headers: {
-                            Authorization: `${localStorage.getItem(
-                                'accessToken'
-                            )}`,
-                        },
-                    }
-                );
+    const fetchRepositories = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/fetch-repos', {
+                headers: {
+                    Authorization: `${localStorage.getItem('accessToken')}`,
+                },
+            });
 
-                const data = await response.json();
-                const filteredPropertiesRepo = data?.map((item: any) => {
-                    return {
-                        archived: item.archived,
-                        clone_url: item.clone_url,
-                        contributors_url: item.contributors_url,
-                        created_at: item.created_at,
-                        updated_at: item.updated_at,
-                        default_branch: item.default_branch,
-                        forks_count: item.forks_count,
-                        forks_url: item.forks_url,
-                        name: item.name,
-                        id: item.id,
-                        language: item.language,
-                        languages_url: item.languages_url,
-                        open_issues_count: item.open_issues_count,
-                        owner: { login: item.owner.login, url: item.owner.url },
-                        private: item.private,
-                        size: item.size,
-                        ssh_url: item.ssh_url,
-                        visibility: item.visibility,
-                    };
-                });
+            const data = await response.json();
+            const filteredPropertiesRepo = data?.filter((item: any) => {
+                if (item.language === null) return;
+                console.log(item.name, item.language);
+                return {
+                    archived: item.archived,
+                    clone_url: item.clone_url,
+                    contributors_url: item.contributors_url,
+                    created_at: item.created_at,
+                    updated_at: item.updated_at,
+                    default_branch: item.default_branch,
+                    forks_count: item.forks_count,
+                    forks_url: item.forks_url,
+                    name: item.name,
+                    id: item.id,
+                    language: item.language,
+                    languages_url: item.languages_url,
+                    open_issues_count: item.open_issues_count,
+                    owner: { login: item.owner.login, url: item.owner.url },
+                    private: item.private,
+                    size: item.size,
+                    ssh_url: item.ssh_url,
+                    visibility: item.visibility,
+                };
+            });
 
-                if (response.status !== 401) {
-                    setRepos(filteredPropertiesRepo);
-                    setFilterdData(filteredPropertiesRepo);
-                } else {
-                    console.log(data.error);
-                }
-                setLoadingData(false);
-            } catch (error) {
-                console.error('Error fetching repositories:', error);
-                alert('Failed to fetch repositories.');
-                setLoadingData(false);
+            if (response.status !== 401) {
+                setRepos(filteredPropertiesRepo);
+                setFilterdData(filteredPropertiesRepo);
+            } else {
+                console.log(data.error);
             }
-        };
+            setLoadingData(false);
+        } catch (error) {
+            console.error('Error fetching repositories:', error);
+            alert('Failed to fetch repositories.');
+            setLoadingData(false);
+        }
+    };
 
+    useEffect(() => {
         fetchRepositories();
     }, []);
+
+    const refreshAllHandler = () => {
+        setLoadingData(true);
+        fetchRepositories();
+    };
 
     return (
         <div>
@@ -122,6 +127,7 @@ const Dashboard = () => {
                             </div>
                             <div className={`flex gap-2`}>
                                 <button
+                                    onClick={refreshAllHandler}
                                     className={`flex text-xs items-center p-2 px-4 gap-2 rounded-md border`}
                                 >
                                     <ArrowPathIcon className={`size-4`} />
@@ -158,55 +164,51 @@ const Dashboard = () => {
                             {filterdData.length >= 1 ? (
                                 filterdData.map((item, index) => {
                                     return (
-                                        item.language && (
+                                        <div
+                                            key={index}
+                                            className={`flex flex-col  p-4 gap-3 hover:bg-gray-100 ${
+                                                index !== filterdData.length - 1
+                                                    ? 'border-b'
+                                                    : ''
+                                            }`}
+                                        >
                                             <div
-                                                key={index}
-                                                className={`flex flex-col  p-4 gap-3 hover:bg-gray-100 ${
-                                                    index !==
-                                                    filterdData.length - 1
-                                                        ? 'border-b'
-                                                        : ''
-                                                }`}
+                                                className={`flex gap-2 items-center`}
                                             >
-                                                <div
-                                                    className={`flex gap-2 items-center`}
+                                                <span>{item.name}</span>
+                                                <span
+                                                    className={`bg-[#EFF8FF] border border-[#B2DDFF] text-primary text-xs px-2 rounded-full`}
                                                 >
-                                                    <span>{item.name}</span>
-                                                    <span
-                                                        className={`bg-[#EFF8FF] border border-[#B2DDFF] text-primary text-xs px-2 rounded-full`}
-                                                    >
-                                                        {item.visibility}
-                                                    </span>
-                                                </div>
-                                                <div
-                                                    className={`flex gap-4 md:gap-8 text-sm font-light`}
-                                                >
-                                                    <span
-                                                        className={`flex items-center gap-2`}
-                                                    >
-                                                        {item.language ||
-                                                            'Unknown'}
-                                                        <span
-                                                            className={`bg-[#1570EF] p-1 rounded-full`}
-                                                        ></span>
-                                                    </span>
-                                                    <span
-                                                        className={`flex items-center gap-2`}
-                                                    >
-                                                        <CircleStackIcon
-                                                            className={`w-4`}
-                                                        />
-                                                        {item.size} KB
-                                                    </span>
-                                                    <span>
-                                                        Updated{' '}
-                                                        {dateFormatter(
-                                                            item.updated_at
-                                                        )}
-                                                    </span>
-                                                </div>
+                                                    {item.visibility}
+                                                </span>
                                             </div>
-                                        )
+                                            <div
+                                                className={`flex gap-4 md:gap-8 text-sm font-light`}
+                                            >
+                                                <span
+                                                    className={`flex items-center gap-2`}
+                                                >
+                                                    {item.language || 'Unknown'}
+                                                    <span
+                                                        className={`bg-[#1570EF] p-1 rounded-full`}
+                                                    ></span>
+                                                </span>
+                                                <span
+                                                    className={`flex items-center gap-2`}
+                                                >
+                                                    <CircleStackIcon
+                                                        className={`w-4`}
+                                                    />
+                                                    {item.size} KB
+                                                </span>
+                                                <span>
+                                                    Updated{' '}
+                                                    {dateFormatter(
+                                                        item.updated_at
+                                                    )}
+                                                </span>
+                                            </div>
+                                        </div>
                                     );
                                 })
                             ) : (
