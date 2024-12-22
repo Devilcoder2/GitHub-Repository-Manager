@@ -1,20 +1,18 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { increment, decrement } from './redux/actionCreators/index';
-import { RootState } from './redux/store';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Auth from './components/Auth/Auth';
+import Dashboard from './components/Home/Dashboard';
 
-const App: React.FC = () => {
-    const count = useSelector((state: RootState) => state.count.count);
-    const dispatch = useDispatch();
-
+function App() {
     return (
-        <div style={{ textAlign: 'center' }}>
-            <h1>Count: {count}</h1>
-            <p>Testing deployment</p>
-            <button onClick={() => dispatch(increment())}>Increment</button>
-            <button onClick={() => dispatch(decrement())}>Decrement</button>
-        </div>
+        <BrowserRouter>
+            <div className={`flex min-h-screen w-full bg-[#FAFAFA]`}>
+                <Routes>
+                    <Route path={'/'} Component={Auth} />
+                    <Route path={'/dashboard'} Component={Dashboard} />
+                </Routes>
+            </div>
+        </BrowserRouter>
     );
-};
+}
 
 export default App;
