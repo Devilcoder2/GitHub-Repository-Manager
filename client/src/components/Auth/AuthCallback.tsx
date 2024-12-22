@@ -17,19 +17,14 @@ const AuthCallback = () => {
                     );
                     const data = await response.json();
 
-                    setTimeout(() => {
-                        if (response.ok) {
-                            console.log('Access token:', data.accessToken);
-                            localStorage.setItem(
-                                'accessToken',
-                                data.accessToken
-                            );
-                            navigate('/dashboard'); // Redirect to dashboard on success
-                        } else {
-                            alert('Authentication failed. Please try again.');
-                            navigate('/'); // Redirect to home on failure
-                        }
-                    }, 5000);
+                    if (response.ok) {
+                        console.log('Access token:', data.accessToken);
+                        localStorage.setItem('accessToken', data.accessToken);
+                        navigate('/dashboard');
+                    } else {
+                        alert('Authentication failed. Please try again.');
+                        navigate('/');
+                    }
                 } catch (error) {
                     console.error('Error during authentication:', error);
                     alert('An error occurred. Please try again.');

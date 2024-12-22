@@ -49,6 +49,23 @@ app.get('/auth/github/callback', async (req, res) => {
     }
 });
 
+// Fetch All Repositories (Public & Private)
+app.get('/fetch-repos', async (req, res) => {
+    try {
+        const response = await axios.get('https://api.github.com/user/repos', {
+            headers: {
+                Authorization: `token ${req.headers.authorization}`,
+            },
+        });
+
+        console.log(response.data);
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error fetching repositories:', error);
+        res.status(500).json({ error: 'Failed to fetch repositories' });
+    }
+});
+
 // Start the server
 const PORT = 5000; // Backend server port
 app.listen(PORT, () => {

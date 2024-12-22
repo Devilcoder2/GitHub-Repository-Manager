@@ -6,7 +6,7 @@ const Auth = () => {
         window.location.href = 'http://localhost:5000/auth/github';
     };
     return (
-        <div className={`flex gap-2 w-full justify-center`}>
+        <div className={`flex gap-2 h-[100vh] w-full  justify-center`}>
             <AuthLeft />
             <AuthRight onGithubLogin={handleGithubLogin} />
         </div>
