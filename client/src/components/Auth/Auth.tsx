@@ -2,10 +2,13 @@ import AuthLeft from './AuthLeft';
 import AuthRight from './AuthRight';
 
 const Auth = () => {
+    const handleGithubLogin = () => {
+        window.location.href = 'http://localhost:5000/auth/github';
+    };
     return (
         <div className={`flex gap-2 w-full justify-center`}>
             <AuthLeft />
-            <AuthRight />
+            <AuthRight onGithubLogin={handleGithubLogin} />
         </div>
     );
 };

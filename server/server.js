@@ -12,7 +12,7 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 // Enable CORS
 app.use(
     cors({
-        origin: 'http://localhost:5174',
+        origin: 'http://localhost:5173',
         credentials: true,
     })
 );
