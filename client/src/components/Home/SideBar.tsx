@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { RootState } from '../../redux/store';
+import axios from 'axios';
 
 interface SideBarProps {
     setIsAuthDone: (value: boolean) => void;
@@ -23,8 +24,23 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
     const [isMobile, setIsMobile] = useState(false);
     const [selectedItem, setSelectedItem] = useState<number>(0);
     const isMobileRef = useRef(false);
+    const [userName, setUserName] = useState<string>('');
 
     const isDarkModeOn = useSelector((store: RootState) => store.isDarkModeOn);
+
+    const fetchUserDetails = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/user', {
+                headers: {
+                    Authorization: `${localStorage.getItem('accessToken')}`,
+                },
+            });
+
+            setUserName(response.data.name);
+        } catch (error) {
+            console.log('Error fetching user details:', error);
+        }
+    };
 
     useEffect(() => {
         const handleResize = () => {
@@ -40,6 +56,7 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
         };
 
         handleResize();
+        fetchUserDetails();
 
         window.addEventListener('resize', handleResize);
 
@@ -104,7 +121,9 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
                         <div className='flex flex-col items-center py-4'>
                             <span className='mt-2 text-sm border p-2 rounded-xl flex gap-2 items-center'>
                                 <span className='text-gray-800 dark:text-[#ECECEC]'>
-                                    UtkarshDhairyaPanwar...
+                                    {userName.length === 0
+                                        ? "User's Name"
+                                        : userName}
                                 </span>
                                 <ChevronDownIcon
                                     className={`w-5 text-gray-800 dark:text-[#ECECEC]`}
