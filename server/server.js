@@ -87,6 +87,56 @@ app.get('/user', async (req, res) => {
     }
 });
 
+app.post('/create-repo', async (req, res) => {
+    const {
+        name,
+        description,
+        visibility,
+        autoInit,
+        allowForking,
+        defaultBranch,
+    } = req.body;
+
+    if (!name || !visibility) {
+        return res
+            .status(400)
+            .json({ error: 'Repository name and visibility are required' });
+    }
+
+    try {
+        const response = await axios.post(
+            'https://api.github.com/user/repos',
+            {
+                name: name,
+                description: description || '', // Optional description
+                private: visibility === 'private', // Private based on visibility
+                auto_init: autoInit || false, // Initialize with README if true
+                allow_forking: allowForking !== undefined ? allowForking : true, // Enable forking by default
+            },
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`, // Access token from headers
+                },
+            }
+        );
+
+        console.log('Repository created:', response.data);
+        res.status(201).json({
+            message: 'Repository created successfully',
+            repo: response.data,
+        });
+    } catch (error) {
+        console.error(
+            'Error creating repository:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to create repository',
+            details: error.response?.data,
+        });
+    }
+});
+
 // Start the server
 const PORT = 5000; // Backend server port
 app.listen(PORT, () => {

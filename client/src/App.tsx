@@ -17,6 +17,7 @@ import {
     toggleShowTag,
 } from './redux/actionCreators';
 import { RootState } from './redux/store';
+import AddNewRepo from './components/Home/AddNewRepo';
 
 function App() {
     const [authenticated, setAuthenticated] = useState(false);
@@ -101,6 +102,7 @@ function App() {
                     <Route path='/ai-code-review' element={<AiCodeReview />} />
                     <Route path='/cloud-security' element={<CloudSecurity />} />
                     <Route path='/how-to-use' element={<HowToUse />} />
+                    <Route path='/add-repo' element={<AddNewRepo />} />
                 </Route>
             </Routes>
         </BrowserRouter>

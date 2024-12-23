@@ -8,6 +8,7 @@ import {
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 import { dateFormatter } from '../../helper.ts';
 import { RootState } from '../../redux/store.ts';
@@ -38,6 +39,8 @@ const Dashboard = () => {
     const [repos, setRepos] = useState<Repository[]>([]);
     const [loadingData, setLoadingData] = useState<boolean>(true);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const navigate = useNavigate();
 
     useHotkeys('alt+s', () => {
         if (inputRef.current) {
@@ -107,7 +110,7 @@ const Dashboard = () => {
 
             const data = await response.json();
             const filteredPropertiesRepo = data?.filter((item: any) => {
-                if (item.language === null) return;
+                if (item.language === null) item.language = 'Unknown';
                 return {
                     archived: item.archived,
                     clone_url: item.clone_url,
@@ -153,6 +156,10 @@ const Dashboard = () => {
         fetchRepositories();
     };
 
+    const addRepoHandler = () => {
+        navigate('/add-repo');
+    };
+
     return (
         <div className={`${isDarkModeOn ? 'dark' : ''}`}>
             <div className={`p-2 scrollbar-hide dark:bg-[#171717]`}>
@@ -184,6 +191,7 @@ const Dashboard = () => {
                                     Refresh All
                                 </button>
                                 <button
+                                    onClick={addRepoHandler}
                                     className={`flex text-xs items-center p-2 px-4 gap-2 bg-[#1570EF] dark:bg-[#383838] text-white rounded-md hover:bg-[#1570efde] dark:hover:bg-[#171717]`}
                                 >
                                     <PlusIcon className={`size-4`} />
@@ -229,7 +237,7 @@ const Dashboard = () => {
                                                 <span>{item.name}</span>
                                                 {isTagsVisible && (
                                                     <span
-                                                        className={`bg-gray-200 dark:bg-[#383838] border border-gray-300 dark:border-[rgb(47,47,47)] text-xs px-2 rounded-full`}
+                                                        className={`bg-[#EFF8FF] border-[#B2DDFF]  dark:bg-[#383838] text-[#1570EF] dark:text-white border  dark:border-[rgb(47,47,47)] text-xs px-2 rounded-full`}
                                                     >
                                                         {item.visibility}
                                                     </span>
@@ -243,7 +251,7 @@ const Dashboard = () => {
                                                 >
                                                     {item.language || 'Unknown'}
                                                     <span
-                                                        className={`bg-gray-800 dark:bg-[#ECECEC] p-1 rounded-full`}
+                                                        className={`bg-[#1570EF] dark:bg-[#ECECEC] p-1 rounded-full`}
                                                     ></span>
                                                 </span>
                                                 {isRepoSizeVisible && (
