@@ -6,13 +6,12 @@ import {
     PlusIcon,
 } from '@heroicons/react/24/outline';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { useSelector } from 'react-redux';
 import { SyncLoader } from 'react-spinners';
 import { dateFormatter } from '../../helper.ts';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store.ts';
-import { useHotkeys } from 'react-hotkeys-hook';
 
-// Define a type for the repository objects
 interface Repository {
     archived: string;
     clone_url: string;
@@ -55,18 +54,16 @@ const Dashboard = () => {
     );
 
     const sortingOrder = useSelector((store: RootState) => store.sortingOrder);
-    console.log(sortingOrder);
+    const isDarkModeOn = useSelector((store: RootState) => store.isDarkModeOn);
 
     useEffect(() => {
         const sortedData = [...repos];
 
         switch (sortingOrder) {
             case 0:
-                // Sort by name alphabetically
                 sortedData.sort((a, b) => a.name.localeCompare(b.name));
                 break;
             case 1:
-                // Sort by created_at in decreasing order
                 sortedData.sort(
                     (a, b) =>
                         new Date(b.created_at).getTime() -
@@ -74,7 +71,6 @@ const Dashboard = () => {
                 );
                 break;
             case 2:
-                // Sort by updated_at in decreasing order
                 sortedData.sort(
                     (a, b) =>
                         new Date(b.updated_at).getTime() -
@@ -89,7 +85,6 @@ const Dashboard = () => {
     }, [sortingOrder, repos]);
 
     const handleFilter = (e: ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.value);
         const value = e.target.value;
         const filtered = repos.filter(
             (item) =>
@@ -113,7 +108,6 @@ const Dashboard = () => {
             const data = await response.json();
             const filteredPropertiesRepo = data?.filter((item: any) => {
                 if (item.language === null) return;
-                console.log(item.name, item.language);
                 return {
                     archived: item.archived,
                     clone_url: item.clone_url,
@@ -160,12 +154,14 @@ const Dashboard = () => {
     };
 
     return (
-        <div>
-            <div className={`p-2 scrollbar-hide`}>
+        <div className={`${isDarkModeOn ? 'dark' : ''}`}>
+            <div className={`p-2 scrollbar-hide dark:bg-[#171717]`}>
                 <div
-                    className={`bg-white w-full rounded-xl border flex flex-col`}
+                    className={`bg-white dark:bg-[#212121] dark:text-[#ECECEC] w-full rounded-xl border dark:border-[rgb(47,47,47)] flex flex-col`}
                 >
-                    <div className={`flex flex-col gap-4 border-b p-4`}>
+                    <div
+                        className={`flex flex-col gap-4 border-b dark:border-[rgb(47,47,47)] p-4`}
+                    >
                         <div
                             className={`flex justify-between items-center flex-wrap gap-4`}
                         >
@@ -173,20 +169,22 @@ const Dashboard = () => {
                                 <span className={`font-semibold text-xl`}>
                                     Repositories
                                 </span>
-                                <span className={`font-light text-sm`}>
+                                <span
+                                    className={`font-light text-sm dark:text-[#ECECEC]`}
+                                >
                                     {filterdData.length} total repositories
                                 </span>
                             </div>
                             <div className={`flex gap-2`}>
                                 <button
                                     onClick={refreshAllHandler}
-                                    className={`flex text-xs items-center p-2 px-4 gap-2 rounded-md border`}
+                                    className={`flex text-xs items-center p-2 px-4 gap-2 rounded-md border dark:border-[rgb(47,47,47)] dark:text-[#ECECEC] hover:bg-gray-100 dark:hover:bg-[rgb(47,47,47)]`}
                                 >
                                     <ArrowPathIcon className={`size-4`} />
                                     Refresh All
                                 </button>
                                 <button
-                                    className={`flex text-xs items-center p-2 px-4 gap-2 bg-[#1570EF] text-white rounded-md`}
+                                    className={`flex text-xs items-center p-2 px-4 gap-2 bg-[#1570EF] dark:bg-[#383838] text-white rounded-md hover:bg-[#1570efde] dark:hover:bg-[#171717]`}
                                 >
                                     <PlusIcon className={`size-4`} />
                                     Add Repository
@@ -196,17 +194,17 @@ const Dashboard = () => {
                         <div>
                             <label
                                 htmlFor={`inputSearch`}
-                                className={`border w-fit rounded-md flex gap-2 items-center px-2 py-2`}
+                                className={`border dark:border-[rgb(47,47,47)] w-fit rounded-md flex gap-2 items-center px-2 py-2 dark:bg-[#212121]`}
                             >
                                 <MagnifyingGlassIcon
-                                    className={`size-4 stroke-2`}
+                                    className={`size-4 stroke-2 dark:stroke-[#ECECEC]`}
                                 />
                                 <input
                                     id={`inputSearch`}
                                     ref={inputRef}
                                     placeholder={`Search Repositories`}
                                     onChange={handleFilter}
-                                    className={`text-xs w-[200px] placeholder:text-gray-700 outline-none`}
+                                    className={`text-xs w-[200px] placeholder:text-gray-700 dark:placeholder:text-[#ECECEC] outline-none dark:bg-[#212121] dark:text-[#ECECEC]`}
                                 />
                             </label>
                         </div>
@@ -219,9 +217,9 @@ const Dashboard = () => {
                                     return (
                                         <div
                                             key={index}
-                                            className={`flex flex-col  p-4 gap-3 hover:bg-gray-100 ${
+                                            className={`flex flex-col p-4 gap-3 hover:bg-gray-100 dark:hover:bg-[rgb(47,47,47)] ${
                                                 index !== filterdData.length - 1
-                                                    ? 'border-b'
+                                                    ? 'border-b dark:border-[rgb(47,47,47)]'
                                                     : ''
                                             }`}
                                         >
@@ -231,21 +229,21 @@ const Dashboard = () => {
                                                 <span>{item.name}</span>
                                                 {isTagsVisible && (
                                                     <span
-                                                        className={`bg-[#EFF8FF] border border-[#B2DDFF] text-primary text-xs px-2 rounded-full`}
+                                                        className={`bg-gray-200 dark:bg-[#383838] border border-gray-300 dark:border-[rgb(47,47,47)] text-xs px-2 rounded-full`}
                                                     >
                                                         {item.visibility}
                                                     </span>
                                                 )}
                                             </div>
                                             <div
-                                                className={`flex gap-4 md:gap-8 text-sm font-light`}
+                                                className={`flex gap-4 md:gap-8 text-sm font-light dark:text-[#ECECEC]`}
                                             >
                                                 <span
                                                     className={`flex items-center gap-2`}
                                                 >
                                                     {item.language || 'Unknown'}
                                                     <span
-                                                        className={`bg-[#1570EF] p-1 rounded-full`}
+                                                        className={`bg-gray-800 dark:bg-[#ECECEC] p-1 rounded-full`}
                                                     ></span>
                                                 </span>
                                                 {isRepoSizeVisible && (
@@ -270,7 +268,7 @@ const Dashboard = () => {
                                 })
                             ) : (
                                 <div
-                                    className={`flex flex-col border-b p-4 gap-3 text-gray-500 text-center`}
+                                    className={`flex flex-col border-b dark:border-[rgb(47,47,47)] p-4 gap-3 text-gray-500 dark:text-[#ECECEC] text-center`}
                                 >
                                     Looks like there is no repository to show.
                                 </div>
@@ -280,7 +278,11 @@ const Dashboard = () => {
 
                     {loadingData && (
                         <div className='flex justify-center items-center h-96'>
-                            <SyncLoader color={`#1570EF`} />
+                            <SyncLoader
+                                color={`${
+                                    isDarkModeOn ? '#ECECEC' : '#1570EF'
+                                }`}
+                            />
                         </div>
                     )}
                 </div>

@@ -6,6 +6,10 @@ body {
     @apply min-h-screen bg-[#FAFAFA];
 }
 
+body.dark {
+    @apply bg-[#383838];
+}
+
 .shadowCardAuth {
     box-shadow: 0 0 24px 0 rgba(8, 23, 53, 0.16);
 }

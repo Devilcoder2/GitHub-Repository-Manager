@@ -61,6 +61,14 @@ function App() {
         setAuthenticated(!!localStorage.getItem('accessToken'));
     }, [isAuthDone]);
 
+    useEffect(() => {
+        if (isDarkModeOn) {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+    }, [isDarkModeOn]);
+
     return (
         <BrowserRouter>
             <Routes>
