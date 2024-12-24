@@ -76,6 +76,13 @@ const AddNewRepo = () => {
                     message: 'Repository created successfully!',
                     type: 'success',
                 });
+                setFormData({
+                    name: '',
+                    description: '',
+                    visibility: 'public',
+                    autoInit: false,
+                    allowForking: true,
+                });
             } catch (error: any) {
                 setNotification({
                     message: 'Error creating repository!',

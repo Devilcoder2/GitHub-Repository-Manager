@@ -8,7 +8,7 @@ import {
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 import { dateFormatter } from '../../helper.ts';
 import { RootState } from '../../redux/store.ts';
@@ -39,6 +39,9 @@ const Dashboard = () => {
     const [repos, setRepos] = useState<Repository[]>([]);
     const [loadingData, setLoadingData] = useState<boolean>(true);
     const inputRef = useRef<HTMLInputElement>(null);
+    const { page } = useOutletContext<{ page: number }>();
+    const [isLastPage, setIsLastPage] = useState<boolean>(false);
+    const [isFetching, setIsFetching] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
@@ -102,14 +105,23 @@ const Dashboard = () => {
 
     const fetchRepositories = async () => {
         try {
-            const response = await fetch('http://localhost:5000/fetch-repos', {
-                headers: {
-                    Authorization: `${localStorage.getItem('accessToken')}`,
-                },
-            });
+            const response = await fetch(
+                `http://localhost:5000/fetch-repos?page=${page}`,
+                {
+                    headers: {
+                        Authorization: `${localStorage.getItem('accessToken')}`,
+                    },
+                }
+            );
 
             const data = await response.json();
-            const filteredPropertiesRepo = data?.filter((item: any) => {
+            console.log(data);
+            if (data.length === 0) {
+                setIsLastPage(true);
+                setIsFetching(false);
+                return;
+            }
+            const filteredPropertiesRepo = data?.map((item: any) => {
                 if (item.language === null) item.language = 'Unknown';
                 return {
                     archived: item.archived,
@@ -134,10 +146,10 @@ const Dashboard = () => {
             });
 
             if (response.status !== 401) {
-                setRepos(filteredPropertiesRepo);
-                setFilterdData(filteredPropertiesRepo);
+                setRepos((prev) => [...prev, ...filteredPropertiesRepo]);
+                setFilterdData((prev) => [...prev, ...filteredPropertiesRepo]);
             } else {
-                console.log(data.error);
+                console.error(data.error);
             }
             setLoadingData(false);
         } catch (error) {
@@ -148,8 +160,11 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        fetchRepositories();
-    }, []);
+        if (!isLastPage) {
+            if (!loadingData) setIsFetching(true);
+            fetchRepositories();
+        }
+    }, [page]);
 
     const refreshAllHandler = () => {
         setLoadingData(true);
@@ -219,7 +234,7 @@ const Dashboard = () => {
                     </div>
 
                     {!loadingData && (
-                        <div className={`flex flex-col w-full scrollbar-hide`}>
+                        <div className={`flex flex-col w-full`}>
                             {filterdData.length >= 1 ? (
                                 filterdData.map((item, index) => {
                                     return (
@@ -291,6 +306,16 @@ const Dashboard = () => {
 
                     {loadingData && (
                         <div className='flex justify-center items-center h-96'>
+                            <SyncLoader
+                                color={`${
+                                    isDarkModeOn ? '#ECECEC' : '#1570EF'
+                                }`}
+                            />
+                        </div>
+                    )}
+
+                    {isFetching && (
+                        <div className='flex justify-center items-center h-24'>
                             <SyncLoader
                                 color={`${
                                     isDarkModeOn ? '#ECECEC' : '#1570EF'
