@@ -88,14 +88,7 @@ app.get('/user', async (req, res) => {
 });
 
 app.post('/create-repo', async (req, res) => {
-    const {
-        name,
-        description,
-        visibility,
-        autoInit,
-        allowForking,
-        defaultBranch,
-    } = req.body;
+    const { name, description, visibility, autoInit, allowForking } = req.body;
 
     if (!name || !visibility) {
         return res
@@ -133,6 +126,29 @@ app.post('/create-repo', async (req, res) => {
         res.status(500).json({
             error: 'Failed to create repository',
             details: error.response?.data,
+        });
+    }
+});
+
+app.get('/repo/:id', async (req, res) => {
+    const repoId = req.params.id;
+
+    try {
+        const response = await axios.get(
+            `https://api.github.com/repositories/${repoId}`,
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`, // Access token from headers
+                },
+            }
+        );
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error fetching repository details:', error.message);
+        res.status(500).json({
+            message: 'Error fetching repository details',
+            error: error.message,
         });
     }
 });

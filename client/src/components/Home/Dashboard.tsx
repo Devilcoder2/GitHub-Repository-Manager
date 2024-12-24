@@ -225,6 +225,11 @@ const Dashboard = () => {
                                     return (
                                         <div
                                             key={index}
+                                            onClick={() =>
+                                                navigate(
+                                                    '/repo-details/' + item.id
+                                                )
+                                            }
                                             className={`flex flex-col p-4 gap-3 hover:bg-gray-100 dark:hover:bg-[rgb(47,47,47)] ${
                                                 index !== filterdData.length - 1
                                                     ? 'border-b dark:border-[rgb(47,47,47)]'

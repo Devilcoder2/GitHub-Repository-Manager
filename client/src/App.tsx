@@ -18,6 +18,7 @@ import {
 } from './redux/actionCreators';
 import { RootState } from './redux/store';
 import AddNewRepo from './components/Home/AddNewRepo';
+import RepoDetails from './components/Home/RepoDetails';
 
 function App() {
     const [authenticated, setAuthenticated] = useState(false);
@@ -103,6 +104,7 @@ function App() {
                     <Route path='/cloud-security' element={<CloudSecurity />} />
                     <Route path='/how-to-use' element={<HowToUse />} />
                     <Route path='/add-repo' element={<AddNewRepo />} />
+                    <Route path='/repo-details/:id' element={<RepoDetails />} />
                 </Route>
             </Routes>
         </BrowserRouter>
