@@ -237,6 +237,7 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
                                 onClick={() => {
                                     localStorage.removeItem('accessToken');
                                     setIsAuthDone(false);
+                                    console.log('Logged out');
                                 }}
                                 className='flex items-center w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-[#ECECEC] rounded-lg hover:bg-gray-100 dark:hover:bg-[#171717]'
                             >
