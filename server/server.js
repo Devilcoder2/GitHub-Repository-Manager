@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { runGemini } = require('./geminiConfig');
 
 dotenv.config();
 
@@ -150,6 +151,18 @@ app.get('/repo/:id', async (req, res) => {
             message: 'Error fetching repository details',
             error: error.message,
         });
+    }
+});
+
+app.post('/codeReview', async (req, res) => {
+    const { codeSnippet } = req.body;
+
+    try {
+        const review = await runGemini(codeSnippet);
+        res.status(200).json({ review });
+    } catch (error) {
+        console.error('Error during code review:', error);
+        res.status(500).json({ error: 'Failed to review code snippet' });
     }
 });
 

@@ -13,3 +13,44 @@ body.dark {
 .shadowCardAuth {
     box-shadow: 0 0 24px 0 rgba(8, 23, 53, 0.16);
 }
+
+/* For headings with greater font size and uppercase */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+    font-size: 2rem; /* Adjust font size as needed */
+    text-transform: uppercase;
+    margin-bottom: 1.5rem; /* Increase spacing below headings */
+}
+
+/* For increased spacing between elements */
+.prose p {
+    margin-bottom: 1.2rem; /* Adjust spacing between paragraphs */
+}
+
+.prose ul,
+.prose ol {
+    margin-bottom: 1.5rem;
+}
+
+.prose blockquote {
+    margin-bottom: 1.5rem;
+}
+
+/* For code snippet with a different color */
+/* For code in light mode */
+.prose code {
+    background-color: #f4f4f4; /* Light background for code */
+    color: #d9534f; /* Red color for code text */
+    padding: 0.2rem 0.4rem; /* Add padding for better readability */
+    border-radius: 4px; /* Optional: rounded corners */
+}
+
+/* For code in dark mode */
+.dark .prose code {
+    background-color: #383838; /* Dark background for code */
+    color: #d9534f; /* Red color for code text */
+}
