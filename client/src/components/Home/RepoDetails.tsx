@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { SyncLoader } from 'react-spinners';
+import { RootState } from '../../redux/store';
 
 const RepoDetails = () => {
     const { id } = useParams<{ id: string }>();
     const [repoDetails, setRepoDetails] = useState<any>(null);
     const [languages, setLanguages] = useState<any>(null);
     const [isRepoPrivate, setIsRepoPrivate] = useState(false);
+
+    const isDarkModeOn = useSelector((store: RootState) => store.isDarkModeOn);
 
     type LanguageUsage = { [key: string]: number };
 
@@ -55,10 +60,8 @@ const RepoDetails = () => {
 
     if (!repoDetails && !isRepoPrivate) {
         return (
-            <div className='flex justify-center items-center min-h-screen bg-gray-100 dark:bg-[#212121]'>
-                <span className='text-lg text-gray-600 dark:text-gray-300'>
-                    Loading repository details...
-                </span>
+            <div className='flex justify-center items-center min-h-screen w-full bg-[#FAFAFA] dark:bg-[#383838]'>
+                <SyncLoader color={`${isDarkModeOn ? '#ECECEC' : '#1570EF'}`} />
             </div>
         );
     }
