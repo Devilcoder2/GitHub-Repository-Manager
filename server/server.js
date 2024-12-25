@@ -10,7 +10,7 @@ const app = express();
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
-// Enable CORS
+//HANDLE CORS
 app.use(
     cors({
         origin: 'http://localhost:5173',
@@ -20,13 +20,13 @@ app.use(
 
 app.use(express.json());
 
-// GitHub OAuth: Redirect to GitHub login
+// GITHUB OAUTH: Redirect to GitHub login page
 app.get('/auth/github', (req, res) => {
     const redirectUri = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=repo,user`;
     res.redirect(redirectUri);
 });
 
-// GitHub OAuth: Handle callback and exchange code for access token
+// GITHUB OAUTH: Handle callback and exchange code for access token
 app.get('/auth/github/callback', async (req, res) => {
     const code = req.query.code;
 
@@ -42,7 +42,6 @@ app.get('/auth/github/callback', async (req, res) => {
         );
 
         const accessToken = tokenResponse.data.access_token;
-
         res.status(200).json({ accessToken });
     } catch (error) {
         console.error('Error fetching access token:', error);
@@ -50,7 +49,7 @@ app.get('/auth/github/callback', async (req, res) => {
     }
 });
 
-// Fetch All Repositories (Public & Private)
+// FETCH ALL REPOSITORIES (both public & private)
 app.get('/fetch-repos', async (req, res) => {
     const perPage = 10;
     const page = req.query.page || 1;
@@ -71,7 +70,7 @@ app.get('/fetch-repos', async (req, res) => {
     }
 });
 
-// Fetch user details (Logged in user)
+//FETCH USER DETAILS (Logged in user)
 app.get('/user', async (req, res) => {
     try {
         const response = await axios.get('https://api.github.com/user', {
@@ -80,14 +79,14 @@ app.get('/user', async (req, res) => {
             },
         });
 
-        console.log(response.data); // Log the user details to the console for debugging
-        res.json(response.data); // Send the user details as JSON response
+        res.json(response.data);
     } catch (error) {
         console.error('Error fetching user details:', error);
         res.status(500).json({ error: 'Failed to fetch user details' });
     }
 });
 
+//CREATE A NEW REPOSITORY
 app.post('/create-repo', async (req, res) => {
     const { name, description, visibility, autoInit, allowForking } = req.body;
 
@@ -102,19 +101,18 @@ app.post('/create-repo', async (req, res) => {
             'https://api.github.com/user/repos',
             {
                 name: name,
-                description: description || '', // Optional description
-                private: visibility === 'private', // Private based on visibility
-                auto_init: autoInit || false, // Initialize with README if true
-                allow_forking: allowForking !== undefined ? allowForking : true, // Enable forking by default
+                description: description || '',
+                private: visibility === 'private',
+                auto_init: autoInit || false,
+                allow_forking: allowForking !== undefined ? allowForking : true,
             },
             {
                 headers: {
-                    Authorization: `token ${req.headers.authorization}`, // Access token from headers
+                    Authorization: `token ${req.headers.authorization}`,
                 },
             }
         );
 
-        console.log('Repository created:', response.data);
         res.status(201).json({
             message: 'Repository created successfully',
             repo: response.data,
@@ -131,6 +129,7 @@ app.post('/create-repo', async (req, res) => {
     }
 });
 
+//FETCH REPOSITORY DETAILS
 app.get('/repo/:id', async (req, res) => {
     const repoId = req.params.id;
 
@@ -154,6 +153,7 @@ app.get('/repo/:id', async (req, res) => {
     }
 });
 
+//AI CODE REVIEW
 app.post('/codeReview', async (req, res) => {
     const { codeSnippet } = req.body;
 
@@ -166,8 +166,7 @@ app.post('/codeReview', async (req, res) => {
     }
 });
 
-// Start the server
-const PORT = 5000; // Backend server port
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

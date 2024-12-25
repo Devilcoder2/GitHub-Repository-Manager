@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom styles */
 body {
     @apply min-h-screen bg-[#FAFAFA];
 }
@@ -21,14 +22,14 @@ body.dark {
 .prose h4,
 .prose h5,
 .prose h6 {
-    font-size: 2rem; /* Adjust font size as needed */
+    font-size: 2rem; 
     text-transform: uppercase;
-    margin-bottom: 1.5rem; /* Increase spacing below headings */
+    margin-bottom: 1.5rem; 
 }
 
-/* For increased spacing between elements */
+/* For increased spacing between elements - AI CODE REVIEW SECTION  */
 .prose p {
-    margin-bottom: 1.2rem; /* Adjust spacing between paragraphs */
+    margin-bottom: 1.2rem; 
 }
 
 .prose ul,
@@ -43,14 +44,14 @@ body.dark {
 /* For code snippet with a different color */
 /* For code in light mode */
 .prose code {
-    background-color: #f4f4f4; /* Light background for code */
-    color: #d9534f; /* Red color for code text */
-    padding: 0.2rem 0.4rem; /* Add padding for better readability */
-    border-radius: 4px; /* Optional: rounded corners */
+    background-color: #f4f4f4;
+    color: #d9534f; 
+    padding: 0.2rem 0.4rem; 
+    border-radius: 4px; 
 }
 
 /* For code in dark mode */
 .dark .prose code {
-    background-color: #383838; /* Dark background for code */
-    color: #d9534f; /* Red color for code text */
+    background-color: #383838; 
+    color: #d9534f; 
 }

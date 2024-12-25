@@ -6,7 +6,6 @@ const toggleRepoSizeReducer = (
     initialState: boolean = repoSizeInitialState,
     action: { type: string; payload: boolean }
 ) => {
-    console.log('IN REDUCER', action.payload);
     switch (action.type) {
         case TOGGLE_REPO_SIZE:
             return !action.payload;

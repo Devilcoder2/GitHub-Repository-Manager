@@ -2,51 +2,40 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SyncLoader } from 'react-spinners';
-import { RootState } from '../../redux/store';
+import { BASE_URL } from '../../../helper';
 import {
     changeSortingOrder,
     toggleDarkMode,
     toggleRepoSize,
     toggleShowTag,
-} from '../../redux/actionCreators';
+} from '../../../redux/actionCreators';
 
-// Define the structure of the userDetails object
-interface UserDetails {
-    avatar_url: string;
-    bio: string;
-    created_at: string;
-    followers: number;
-    following: number;
-    html_url: string;
-    name: string;
-    public_repos: number;
-    total_private_repos: number;
-    two_factor_authentication: boolean;
-    plan: {
-        name: string;
-        space: number;
-        collaborators: number;
-        private_repos: number;
-    };
-}
-
+import { UserDetails } from '../../../redux/interfaces';
+import { RootState } from '../../../redux/store';
+import KeyboardShortcuts from './KeyboardShortcuts';
 const Settings = () => {
-    const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+    const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // Store the user details
 
+    const sortingOrder = useSelector((state: RootState) => state.sortingOrder);
+    const isDarkModeOn = useSelector((state: RootState) => state.isDarkModeOn);
     const isRepoSizeVisible = useSelector(
         (state: RootState) => state.isRepoSizeVisible
     );
-    const isDarkModeOn = useSelector((state: RootState) => state.isDarkModeOn);
     const isTagsVisible = useSelector(
         (state: RootState) => state.isTagsVisible
     );
-    const sortingOrder = useSelector((state: RootState) => state.sortingOrder);
 
     const disptach = useDispatch();
 
+    // Fetch the user details 
+    useEffect(() => {
+        fetchUserDetails();
+    }, []);
+
+    // Fetch the user details from the server
     const fetchUserDetails = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/user', {
+            const response = await axios.get(`${BASE_URL}/user`, {
                 headers: {
                     Authorization: `${localStorage.getItem('accessToken')}`,
                 },
@@ -58,22 +47,22 @@ const Settings = () => {
         }
     };
 
-    useEffect(() => {
-        fetchUserDetails();
-    }, []);
-
+    // Toggle the visibility of the repository size
     const isRepoSizeVisibleChangeHandler = () => {
         disptach(toggleRepoSize(isRepoSizeVisible));
     };
 
+    // Toggle the dark mode
     const darkModeChangeHandler = () => {
         disptach(toggleDarkMode(isDarkModeOn));
     };
 
+    // Toggle the visibility of the public/private tags
     const isTagsVisibleChangeHandler = () => {
         disptach(toggleShowTag(isTagsVisible));
     };
 
+    // Show a loading spinner while fetching the user details
     if (!userDetails) {
         return (
             <div className='flex justify-center items-center min-h-screen w-full bg-[#FAFAFA] dark:bg-[#383838]'>
@@ -101,17 +90,15 @@ const Settings = () => {
             <div
                 className={`flex flex-col items-center justify-start p-4 w-full min-h-screen dark:bg-[#171717] dark:text-[#ECECEC]`}
             >
-                {/* User Details Section */}
+                {/* USER DETAILS SECTION  */}
                 <div className='bg-white dark:bg-[#212121] rounded-lg shadow-md w-full p-6'>
                     <div className='flex flex-col md:flex-row items-center gap-6'>
-                        {/* Avatar */}
                         <img
                             src={avatar_url}
                             alt={`${name}'s avatar`}
                             className='w-24 h-24 rounded-full border'
                         />
 
-                        {/* User Info */}
                         <div className='text-center md:text-left'>
                             <h2 className='text-2xl font-semibold'>{name}</h2>
                             <p className='text-gray-600 dark:text-[#ECECEC]'>
@@ -124,7 +111,6 @@ const Settings = () => {
                         </div>
                     </div>
 
-                    {/* Stats */}
                     <div className='mt-6 grid grid-cols-2 md:grid-cols-3 gap-4 text-center'>
                         <div className='bg-gray-50 dark:bg-[#171717] p-4 rounded-lg shadow-sm'>
                             <p className='text-lg font-bold'>{followers}</p>
@@ -172,7 +158,6 @@ const Settings = () => {
                         </div>
                     </div>
 
-                    {/* Profile Button */}
                     <div className='mt-6 text-center'>
                         <a
                             href={html_url}
@@ -185,13 +170,12 @@ const Settings = () => {
                     </div>
                 </div>
 
-                {/* User Settings Section */}
+                {/* SETTINGS SECTION  */}
                 <div className='bg-white dark:bg-[#212121] rounded-lg shadow-lg w-full mt-8 p-6 md:p-8'>
                     <h3 className='text-xl md:text-2xl font-semibold text-center text-gray-800 dark:text-[#ECECEC] mb-4'>
                         User Settings
                     </h3>
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
-                        {/* Dark/Light Mode Toggle */}
                         <div className='flex justify-between items-center border-b pb-4 dark:border-gray-600'>
                             <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
                                 Dark Mode
@@ -208,7 +192,6 @@ const Settings = () => {
                             </label>
                         </div>
 
-                        {/* Show Repo Size */}
                         <div className='flex justify-between items-center border-b pb-4 dark:border-gray-600'>
                             <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
                                 Show Repo Size
@@ -225,7 +208,6 @@ const Settings = () => {
                             </label>
                         </div>
 
-                        {/* Show Public/Private Tags */}
                         <div className='flex justify-between items-center border-b pb-4 dark:border-gray-600'>
                             <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
                                 Show Public/Private Tags
@@ -242,7 +224,6 @@ const Settings = () => {
                             </label>
                         </div>
 
-                        {/* Sorting Repos */}
                         <div className='flex justify-between items-center border-b pb-4 dark:border-gray-600'>
                             <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
                                 Sort Repos
@@ -272,69 +253,9 @@ const Settings = () => {
                     </div>
                 </div>
 
-                {/* Keyboard Shortcuts Section */}
+                {/* KEYBOARD SHORTCUTS SECTION  */}
                 <div className='bg-white dark:bg-[#212121] rounded-lg shadow-lg w-full mt-8 p-6 md:p-8'>
-                    <h3 className='text-xl md:text-2xl font-semibold text-center text-gray-800 dark:text-[#ECECEC] mb-4'>
-                        Keyboard Shortcuts
-                    </h3>
-                    <div className='space-y-4'>
-                        <div className='flex justify-between'>
-                            <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
-                                Toggle Dark Mode
-                            </span>
-                            <span className='text-sm md:text-base text-gray-500 dark:text-[#ECECEC]'>
-                                Alt + P
-                            </span>
-                        </div>
-                        <div className='flex justify-between'>
-                            <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
-                                Show Repo Size
-                            </span>
-                            <span className='text-sm md:text-base text-gray-500 dark:text-[#ECECEC]'>
-                                Alt + R
-                            </span>
-                        </div>
-                        <div className='flex justify-between'>
-                            <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
-                                Show Public/Private Tags
-                            </span>
-                            <span className='text-sm md:text-base text-gray-500 dark:text-[#ECECEC]'>
-                                Alt + M
-                            </span>
-                        </div>
-                        <div className='flex justify-between'>
-                            <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
-                                Sort Repos Alphabetically
-                            </span>
-                            <span className='text-sm md:text-base text-gray-500 dark:text-[#ECECEC]'>
-                                Alt + 1
-                            </span>
-                        </div>
-                        <div className='flex justify-between'>
-                            <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
-                                Sort Repos by Created On
-                            </span>
-                            <span className='text-sm md:text-base text-gray-500 dark:text-[#ECECEC]'>
-                                Alt + 2
-                            </span>
-                        </div>
-                        <div className='flex justify-between'>
-                            <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
-                                Sort Repos by Updated On
-                            </span>
-                            <span className='text-sm md:text-base text-gray-500 dark:text-[#ECECEC]'>
-                                Alt + 3
-                            </span>
-                        </div>
-                        <div className='flex justify-between'>
-                            <span className='text-sm md:text-base text-gray-700 dark:text-[#ECECEC]'>
-                                Search Repos
-                            </span>
-                            <span className='text-sm md:text-base text-gray-500 dark:text-[#ECECEC]'>
-                                Alt + S
-                            </span>
-                        </div>
-                    </div>
+                    <KeyboardShortcuts />
                 </div>
             </div>
         </div>

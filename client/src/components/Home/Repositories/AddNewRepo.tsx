@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import axios from 'axios';
+import { BASE_URL } from '../../../helper';
+import { RootState } from '../../../redux/store';
 
 const AddNewRepo = () => {
-    const isDarkMode = useSelector((state: RootState) => state.isDarkModeOn); // Assuming you store dark mode in redux
-
+    //STATES FOR FORM DATA
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -16,22 +16,27 @@ const AddNewRepo = () => {
         allowForking: true,
     });
 
+    //STATE FOR ERROR HANDLING
     const [errors, setErrors] = useState({
         name: '',
         description: '',
     });
 
+    //STATE FOR NOTIFICATION
     const [notification, setNotification] = useState({
         message: '',
-        type: '', // 'success' or 'error'
+        type: '',
     });
 
+    const isDarkMode = useSelector((state: RootState) => state.isDarkModeOn);
+
+    //HANDLING FORM INPUT CHANGES
     const handleChange = (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
         >
     ) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value, type, checked } = e.target as HTMLInputElement;
 
         setFormData({
             ...formData,
@@ -39,6 +44,7 @@ const AddNewRepo = () => {
         });
     };
 
+    //VALIDATING FORM DATA
     const validateForm = () => {
         const formErrors = { name: '', description: '' };
         let isValid = true;
@@ -57,21 +63,16 @@ const AddNewRepo = () => {
         return isValid;
     };
 
+    //HANDLING FORM SUBMISSION
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (validateForm()) {
             try {
-                const response = await axios.post(
-                    'http://localhost:5000/create-repo',
-                    formData,
-                    {
-                        headers: {
-                            Authorization: `${localStorage.getItem(
-                                'accessToken'
-                            )}`,
-                        },
-                    }
-                );
+                await axios.post(`${BASE_URL}/create-repo`, formData, {
+                    headers: {
+                        Authorization: `${localStorage.getItem('accessToken')}`,
+                    },
+                });
                 setNotification({
                     message: 'Repository created successfully!',
                     type: 'success',
@@ -109,7 +110,7 @@ const AddNewRepo = () => {
                         Create a New Repository
                     </h2>
 
-                    {/* Notification */}
+                    {/* PROVIDES FEEDBACK TO THE USER  */}
                     {notification.message && (
                         <div
                             className={`${
@@ -127,8 +128,8 @@ const AddNewRepo = () => {
                         </div>
                     )}
 
+                    {/* FORM FOR CREATING A NEW REPOSITORY  */}
                     <form onSubmit={handleSubmit}>
-                        {/* Repository Name */}
                         <div className='mb-6'>
                             <label
                                 htmlFor='name'
@@ -153,7 +154,6 @@ const AddNewRepo = () => {
                             )}
                         </div>
 
-                        {/* Description */}
                         <div className='mb-6'>
                             <label
                                 htmlFor='description'
@@ -176,7 +176,6 @@ const AddNewRepo = () => {
                             )}
                         </div>
 
-                        {/* Visibility */}
                         <div className='mb-6'>
                             <label
                                 htmlFor='visibility'
@@ -196,7 +195,6 @@ const AddNewRepo = () => {
                             </select>
                         </div>
 
-                        {/* Initialize with README */}
                         <div className='mb-6 flex items-center'>
                             <input
                                 type='checkbox'
@@ -211,7 +209,6 @@ const AddNewRepo = () => {
                             </label>
                         </div>
 
-                        {/* Allow Forking */}
                         <div className='mb-6 flex items-center'>
                             <input
                                 type='checkbox'
@@ -226,7 +223,6 @@ const AddNewRepo = () => {
                             </label>
                         </div>
 
-                        {/* Submit Button */}
                         <div className='mt-8'>
                             <button
                                 type='submit'

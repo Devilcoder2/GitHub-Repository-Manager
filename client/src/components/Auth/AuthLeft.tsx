@@ -10,6 +10,8 @@ const AuthLeft = () => {
                 alt={'logo'}
                 className={`absolute left-0 bottom-0 w-[300px] aspect-square`}
             />
+
+            {/* FIRST BOX  */}
             <div
                 className={`flex rounded-xl shadowCardAuth flex-col w-full max-w-[400px]`}
             >
@@ -40,6 +42,8 @@ const AuthLeft = () => {
                     </div>
                 </div>
             </div>
+
+            {/* SECOND BOX  */}
             <div
                 className={`flex rounded-xl shadowCardAuth flex-col gap-2 p-4 px-8 translate-x-[50%] -translate-y-[10px] bg-white`}
             >

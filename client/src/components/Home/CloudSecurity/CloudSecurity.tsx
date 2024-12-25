@@ -1,5 +1,6 @@
 const CloudSecurity = () => {
     return (
+        // STATIC CONTENT ONLY 
         <div className='p-8 bg-gray-50 dark:bg-[#212121] min-h-screen text-gray-800 dark:text-[#ECECEC] flex items-center justify-center'>
             <div className='bg-white dark:bg-[#171717] rounded-lg shadow-md p-6 max-w-xl text-center'>
                 <h1 className='text-3xl font-bold mb-4'>Cloud Security</h1>

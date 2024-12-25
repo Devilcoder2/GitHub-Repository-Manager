@@ -1,5 +1,6 @@
 const HowToUse = () => {
     return (
+        // STATIC MARKUP ONLY
         <div className='p-8 bg-gray-50 dark:bg-[#212121] min-h-screen text-gray-800 dark:text-[#ECECEC]'>
             <div className='mx-auto bg-white dark:bg-[#171717] rounded-lg shadow-md p-6 '>
                 <h1 className='text-3xl font-bold mb-4'>How to Use</h1>

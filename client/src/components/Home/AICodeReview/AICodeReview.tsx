@@ -1,33 +1,34 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { BASE_URL } from '../../../helper';
 
 const AICodeReview = () => {
-    const [input, setInput] = useState('');
-    const [response, setResponse] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isReviewing, setIsReviewing] = useState(false);
+    const [input, setInput] = useState(''); // Store the code snippet input by the user
+    const [response, setResponse] = useState(''); // Store the response from the AI model
+    const [isLoading, setIsLoading] = useState(false); // Check if the response is being fetched
+    const [isReviewing, setIsReviewing] = useState(false); // Check if the user is reviewing the response
 
+    // Update the input state when the user types in the textarea
     const handleInputChange = (
         event: React.ChangeEvent<HTMLTextAreaElement>
     ) => {
         setInput(event.target.value);
     };
 
+    // Fetch the code review from the AI model
     const handleGetReview = async () => {
         setIsLoading(true);
         setIsReviewing(true);
-        // Simulate an API call to get the review
 
-        const res = await axios.post('http://localhost:5000/codeReview', {
+        const res = await axios.post(`${BASE_URL}/codeReview`, {
             codeSnippet: input,
         });
-
-        console.log(res.data);
         setResponse(res.data.review);
         setIsLoading(false);
     };
 
+    // Reset the states to review another code snippet
     const handleReviewAnother = () => {
         setIsReviewing(false);
         setInput('');
@@ -36,7 +37,7 @@ const AICodeReview = () => {
 
     return (
         <div className='flex flex-col justify-between min-h-screen bg-[#FAFAFA] dark:bg-[#171717] text-gray-800 dark:text-[#ECECEC] p-4'>
-            {/* Chat Display */}
+            {/* SHOWS THE CODE REVIEW FROM THE AI MODEL  */}
             <div className='flex-grow overflow-auto mb-4'>
                 <div className='p-4 bg-white dark:bg-[#212121] rounded-lg shadow relative'>
                     {isLoading ? (
@@ -45,7 +46,6 @@ const AICodeReview = () => {
                             <div className='h-4 bg-gray-200 dark:bg-[#383838] rounded w-5/6'></div>
                         </div>
                     ) : response ? (
-                        // <p className='whitespace-pre-wrap'>{response}</p>
                         <ReactMarkdown className='prose dark:prose-dark'>
                             {response}
                         </ReactMarkdown>
@@ -57,7 +57,7 @@ const AICodeReview = () => {
                 </div>
             </div>
 
-            {/* Input Section */}
+            {/* TEXTAREA FOR USER TO INPUT CODE SNIPPET */}
             {!isReviewing ? (
                 <div className='flex items-end gap-2'>
                     <textarea
@@ -81,6 +81,7 @@ const AICodeReview = () => {
                     </button>
                 </div>
             ) : (
+                // BUTTON TO REVIEW ANOTHER CODE SNIPPET
                 <div className='flex justify-center'>
                     <button
                         onClick={handleReviewAnother}

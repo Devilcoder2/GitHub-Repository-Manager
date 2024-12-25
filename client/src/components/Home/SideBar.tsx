@@ -9,39 +9,27 @@ import {
     HomeIcon,
     PhoneIcon,
 } from '@heroicons/react/24/outline';
+import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { BASE_URL } from '../../helper';
 import { RootState } from '../../redux/store';
-import axios from 'axios';
 
 interface SideBarProps {
     setIsAuthDone: (value: boolean) => void;
 }
 
 const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
-    const [isSideBarVisible, setIsSideBarVisible] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
-    const [selectedItem, setSelectedItem] = useState<number>(0);
-    const isMobileRef = useRef(false);
-    const [userName, setUserName] = useState<string>('');
+    const [isSideBarVisible, setIsSideBarVisible] = useState(false); // State to toggle the sidebar during mobile view
+    const [isMobile, setIsMobile] = useState(false); // State to check if the screen size is mobile
+    const [selectedItem, setSelectedItem] = useState<number>(0); // State to store the selected item in the sidebar
+    const isMobileRef = useRef(false); // Ref to check if the screen size is mobile
+    const [userName, setUserName] = useState<string>(''); // State to store the user's name
 
     const isDarkModeOn = useSelector((store: RootState) => store.isDarkModeOn);
 
-    const fetchUserDetails = async () => {
-        try {
-            const response = await axios.get('http://localhost:5000/user', {
-                headers: {
-                    Authorization: `${localStorage.getItem('accessToken')}`,
-                },
-            });
-
-            setUserName(response.data.name);
-        } catch (error) {
-            console.log('Error fetching user details:', error);
-        }
-    };
-
+    // Check if the screen size is mobile
     useEffect(() => {
         const handleResize = () => {
             const width = window.innerWidth;
@@ -65,12 +53,28 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
         };
     }, []);
 
+    // Fetch the user's details
+    const fetchUserDetails = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user`, {
+                headers: {
+                    Authorization: `${localStorage.getItem('accessToken')}`,
+                },
+            });
+
+            setUserName(response.data.name);
+        } catch (error) {
+            console.log('Error fetching user details:', error);
+        }
+    };
+
     return (
         <div className={`${isDarkModeOn ? 'dark' : ''}`}>
             <div className='flex flex-col w-full md:w-64 bg-white dark:bg-[#212121] md:h-screen border-r dark:border-[rgb(47,47,47)] relative scrollbar-hide'>
                 <div
                     className={`flex justify-between md:justify-around w-full px-4 items-center`}
                 >
+                    {/* LOGO  */}
                     <div className='flex items-center justify-center gap-4 h-16'>
                         {!isDarkModeOn && (
                             <img
@@ -92,6 +96,7 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
                         </h1>
                     </div>
 
+                    {/* HAMBURGER ICON */}
                     <div className={`flex md:hidden`}>
                         <button
                             onClick={() =>
@@ -118,6 +123,7 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
                     <div
                         className={`bg-white dark:bg-[#212121] w-full h-fit md:h-full flex flex-col`}
                     >
+                        {/* SHOWS THE USER'S NAME  */}
                         <div className='flex flex-col items-center py-4'>
                             <span className='mt-2 text-sm border p-2 rounded-xl flex gap-2 items-center'>
                                 <span className='text-gray-800 dark:text-[#ECECEC]'>
@@ -131,6 +137,7 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
                             </span>
                         </div>
 
+                        {/* NAVIGATION LINKS TO DIFFERENT COMPONENTS */}
                         <nav className='flex-1 px-4 py-2 space-y-2'>
                             <Link
                                 to='/dashboard'
@@ -224,6 +231,7 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
                             </Link>
                         </nav>
 
+                        {/* SUPPORT AND LOGOUT BUTTONS */}
                         <div className='px-4 py-4'>
                             <button className='flex items-center w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-[#ECECEC] rounded-lg hover:bg-gray-100 dark:hover:bg-[#171717]'>
                                 <span className='flex-shrink-0'>
@@ -237,7 +245,6 @@ const SideBar: React.FC<SideBarProps> = ({ setIsAuthDone }) => {
                                 onClick={() => {
                                     localStorage.removeItem('accessToken');
                                     setIsAuthDone(false);
-                                    console.log('Logged out');
                                 }}
                                 className='flex items-center w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-[#ECECEC] rounded-lg hover:bg-gray-100 dark:hover:bg-[#171717]'
                             >

@@ -6,6 +6,7 @@ interface AuthRightProps {
 }
 
 const AuthRight: React.FC<AuthRightProps> = ({ onGithubLogin }) => {
+    //STATE FOR MANAGING SAAS OR SELF HOSTED
     const [isSaas, setIsSaas] = useState(true);
 
     return (
@@ -114,6 +115,8 @@ const AuthRight: React.FC<AuthRightProps> = ({ onGithubLogin }) => {
                     </div>
                 </div>
             </div>
+
+            {/* FOOTER  */}
             <div>
                 <span>
                     By signing up you agree to the <b>Privacy Policy.</b>

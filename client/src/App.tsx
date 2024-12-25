@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Auth from './components/Auth/Auth';
 import AuthCallback from './components/Auth/AuthCallback';
-import AiCodeReview from './components/Home/AICodeReview';
-import CloudSecurity from './components/Home/CloudSecurity';
-import Dashboard from './components/Home/Dashboard';
-import HowToUse from './components/Home/HowToUse';
+import AddNewRepo from './components/Home/Repositories/AddNewRepo';
+import AiCodeReview from './components/Home/AICodeReview/AICodeReview';
+import CloudSecurity from './components/Home/CloudSecurity/CloudSecurity';
+import HowToUse from './components/Home/HowToUse/HowToUse';
 import Layout from './components/Home/Layout';
-import Settings from './components/Home/Settings';
+import RepoDetails from './components/Home/Repositories/RepoDetails';
+import Dashboard from './components/Home/Repositories/Dashboard';
+import Settings from './components/Home/Settings/Settings';
 import {
     changeSortingOrder,
     toggleDarkMode,
@@ -17,12 +19,12 @@ import {
     toggleShowTag,
 } from './redux/actionCreators';
 import { RootState } from './redux/store';
-import AddNewRepo from './components/Home/AddNewRepo';
-import RepoDetails from './components/Home/RepoDetails';
 
 function App() {
+    //STATES FOR MANAGING AUTHENTICATION
     const [authenticated, setAuthenticated] = useState(false);
     const [isAuthDone, setIsAuthDone] = useState(false);
+
     const dispatch = useDispatch();
 
     const isRepoSizeVisible = useSelector(
@@ -35,6 +37,7 @@ function App() {
 
     const isDarkModeOn = useSelector((store: RootState) => store.isDarkModeOn);
 
+    //HOTKEYS FOR TOGGLING FEATURES
     useHotkeys('alt+r', () => {
         dispatch(toggleRepoSize(isRepoSizeVisible));
     });
@@ -59,10 +62,12 @@ function App() {
         dispatch(changeSortingOrder(2));
     });
 
+    //CHECKING IF USER IS AUTHENTICATED
     useEffect(() => {
         setAuthenticated(!!localStorage.getItem('accessToken'));
     }, [isAuthDone]);
 
+    //MANAGE DARK MODE
     useEffect(() => {
         if (isDarkModeOn) {
             document.body.classList.add('dark');
@@ -74,6 +79,7 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
+                {/* ROUTES FOR AUTHENTICATION */}
                 <Route
                     path='/'
                     element={
@@ -89,6 +95,7 @@ function App() {
                     element={<AuthCallback setIsAuthDone={setIsAuthDone} />}
                 />
 
+                {/* ROUTES FOR DASHBOARD */}
                 <Route
                     element={
                         authenticated ? (

@@ -1,50 +1,29 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
-import { RootState } from '../../redux/store';
+import { BASE_URL, convertToPercentages } from '../../../helper';
+import { RootState } from '../../../redux/store';
 
 const RepoDetails = () => {
-    const { id } = useParams<{ id: string }>();
-    const [repoDetails, setRepoDetails] = useState<any>(null);
-    const [languages, setLanguages] = useState<any>(null);
-    const [isRepoPrivate, setIsRepoPrivate] = useState(false);
+    const { id } = useParams<{ id: string }>(); // Get the repository ID from the URL
+    const [repoDetails, setRepoDetails] = useState<any>(null); // Store the repository details
+    const [languages, setLanguages] = useState<any>(null); // Store the languages used in the repository
+    const [isRepoPrivate, setIsRepoPrivate] = useState(false); // Check if the repository is private
 
     const isDarkModeOn = useSelector((store: RootState) => store.isDarkModeOn);
 
-    type LanguageUsage = { [key: string]: number };
-
-    const convertToPercentages = (
-        languageUsage: LanguageUsage
-    ): LanguageUsage => {
-        const total = Object.values(languageUsage).reduce(
-            (sum, value) => sum + value,
-            0
-        );
-        if (total === 0) return {};
-
-        const percentages: LanguageUsage = {};
-        for (const [language, value] of Object.entries(languageUsage)) {
-            percentages[language] = parseFloat(
-                ((value / total) * 100).toFixed(2)
-            );
-        }
-
-        return percentages;
-    };
-
+    // Fetch the repository details using the repository ID
     const fetchRepoDetails = async (repoId: number) => {
         try {
-            const response = await axios.get(
-                `http://localhost:5000/repo/${repoId}`,
-                {
-                    headers: {
-                        Authorization: `${localStorage.getItem('accessToken')}`,
-                    },
-                }
-            );
+            const response = await axios.get(`${BASE_URL}/repo/${repoId}`, {
+                headers: {
+                    Authorization: `${localStorage.getItem('accessToken')}`,
+                },
+            });
             const languages = await axios.get(response.data.languages_url);
             setRepoDetails(response.data);
             setLanguages(convertToPercentages(languages.data));
@@ -54,10 +33,12 @@ const RepoDetails = () => {
         }
     };
 
+    // Fetch the repository details when the component mounts
     useEffect(() => {
         if (id) fetchRepoDetails(Number(id));
     }, [id]);
 
+    // Show a loading spinner while fetching the repository details
     if (!repoDetails && !isRepoPrivate) {
         return (
             <div className='flex justify-center items-center min-h-screen w-full bg-[#FAFAFA] dark:bg-[#383838]'>
@@ -66,6 +47,7 @@ const RepoDetails = () => {
         );
     }
 
+    // Show a message if the repository is private
     if (isRepoPrivate) {
         return (
             <div className='flex justify-center items-center min-h-screen bg-gray-100 dark:bg-[#212121]'>
@@ -93,6 +75,7 @@ const RepoDetails = () => {
         <div className=''>
             <div className='p-8 bg-gray-50 dark:bg-[#212121] min-h-screen text-gray-800 dark:text-[#ECECEC]'>
                 <div className='mx-auto bg-white dark:bg-[#171717] rounded-lg shadow-md p-6'>
+                    {/* HEADER SECTION */}
                     <header className='mb-6'>
                         <h1 className='text-4xl font-bold mb-2'>{name}</h1>
                         <p className='text-sm text-gray-600 dark:text-gray-400'>
@@ -100,6 +83,8 @@ const RepoDetails = () => {
                             {new Date(created_at).toLocaleDateString()}
                         </p>
                     </header>
+
+                    {/* SHOWS DETAILS OF THE REPOSITORY  */}
                     <div className='grid gap-6 sm:grid-cols-2'>
                         <div className='space-y-4'>
                             <div className='flex justify-between items-center'>
@@ -168,6 +153,8 @@ const RepoDetails = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* SHOWS THE LANGUAGES USED IN THE REPOSITORY  */}
                     {languages && (
                         <div className='mt-6'>
                             <h2 className='text-xl font-semibold mb-4'>
@@ -184,7 +171,7 @@ const RepoDetails = () => {
                                                 {language}:
                                             </span>
                                             <span className='text-gray-600 dark:text-gray-400'>
-                                                {percentage}%
+                                                {percentage as number}%
                                             </span>
                                         </div>
                                     )
@@ -192,6 +179,8 @@ const RepoDetails = () => {
                             </div>
                         </div>
                     )}
+
+                    {/* FOOTER SECTION  */}
                     <footer className='mt-6 flex justify-end'>
                         <a
                             href={html_url}

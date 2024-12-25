@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
+import { BASE_URL } from '../../helper';
 
 interface AuthCallbackProps {
     setIsAuthDone: (value: boolean) => void;
@@ -9,6 +10,7 @@ interface AuthCallbackProps {
 const AuthCallback: React.FC<AuthCallbackProps> = ({ setIsAuthDone }) => {
     const navigate = useNavigate();
 
+    //REDIRECTS TO THE BACKEND FOR GETTING THE ACCESS TOKEN
     useEffect(() => {
         const fetchAccessToken = async () => {
             const params = new URLSearchParams(window.location.search);
@@ -17,13 +19,12 @@ const AuthCallback: React.FC<AuthCallbackProps> = ({ setIsAuthDone }) => {
             if (code) {
                 try {
                     const response = await fetch(
-                        `http://localhost:5000/auth/github/callback?code=${code}`
+                        `${BASE_URL}/auth/github/callback?code=${code}`
                     );
                     const data = await response.json();
 
                     if (response.ok) {
                         setIsAuthDone(true);
-                        console.log('Access token:', data.accessToken);
                         localStorage.setItem('accessToken', data.accessToken);
                         navigate('/dashboard');
                     } else {
