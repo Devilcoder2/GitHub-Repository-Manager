@@ -58,6 +58,19 @@ const RepoDetails = () => {
         );
     }
 
+    const deleteButtonClickHandler = async () => {
+        console.log('DELETE BUTTON CLICKED');
+
+        //TODO: THIS IS WORKING, BUT HAVE A MODAL TO CONFIRM DELETE
+        // const response = await axios.delete(`${BASE_URL}/repo/${id}`, {
+        //     headers: {
+        //         Authorization: `${localStorage.getItem('accessToken')}`,
+        //     },
+        // });
+
+        console.log('RESONSE FROM DELETE:');
+    };
+
     const {
         allow_forking,
         archived,
@@ -191,6 +204,12 @@ const RepoDetails = () => {
                             View on GitHub
                         </a>
                     </footer>
+                    <button
+                        onClick={deleteButtonClickHandler}
+                        className='bg-red-600 p-2 rounded-sm'
+                    >
+                        DELETE REPO
+                    </button>
                 </div>
             </div>
         </div>

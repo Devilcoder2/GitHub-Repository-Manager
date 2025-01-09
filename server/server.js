@@ -22,7 +22,7 @@ app.use(express.json());
 
 // GITHUB OAUTH: Redirect to GitHub login page
 app.get('/auth/github', (req, res) => {
-    const redirectUri = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=repo,user`;
+    const redirectUri = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=repo,delete_repo,user`;
     res.redirect(redirectUri);
 });
 
@@ -149,6 +149,42 @@ app.get('/repo/:id', async (req, res) => {
         res.status(500).json({
             message: 'Error fetching repository details',
             error: error.message,
+        });
+    }
+});
+
+// DELETE A REPOSITORY
+app.delete('/repo/:id', async (req, res) => {
+    const repoId = req.params.id;
+
+    try {
+        const repoResponse = await axios.get(
+            `https://api.github.com/repositories/${repoId}`,
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                },
+            }
+        );
+
+        const { full_name } = repoResponse.data;
+        console.log('FULL NAME: ', full_name);
+
+        await axios.delete(`https://api.github.com/repos/${full_name}`, {
+            headers: {
+                Authorization: `token ${req.headers.authorization}`,
+            },
+        });
+
+        res.status(200).json({ message: 'Repository deleted successfully' });
+    } catch (error) {
+        console.error(
+            'Error deleting repository:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to delete repository',
+            details: error.response?.data,
         });
     }
 });
