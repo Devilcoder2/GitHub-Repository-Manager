@@ -7,26 +7,38 @@ import { useParams } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 import { BASE_URL, convertToPercentages } from '../../../helper';
 import { RootState } from '../../../redux/store';
+import ContributorDetails from './ContributorDetails';
 
 const RepoDetails = () => {
     const { id } = useParams<{ id: string }>(); // Get the repository ID from the URL
     const [repoDetails, setRepoDetails] = useState<any>(null); // Store the repository details
     const [languages, setLanguages] = useState<any>(null); // Store the languages used in the repository
     const [isRepoPrivate, setIsRepoPrivate] = useState(false); // Check if the repository is private
+    const [repoContributors, setRepoContributors] = useState<any>([]); // Store the repository contributors
 
     const isDarkModeOn = useSelector((store: RootState) => store.isDarkModeOn);
 
     // Fetch the repository details using the repository ID
     const fetchRepoDetails = async (repoId: number) => {
         try {
+            // Fetch the repository details
             const response = await axios.get(`${BASE_URL}/repo/${repoId}`, {
                 headers: {
                     Authorization: `${localStorage.getItem('accessToken')}`,
                 },
             });
+
+            // Fetch the languages
             const languages = await axios.get(response.data.languages_url);
+
+            // Fetch the contributors
+            const contributors = await axios.get(
+                response.data.contributors_url
+            );
+
             setRepoDetails(response.data);
             setLanguages(convertToPercentages(languages.data));
+            setRepoContributors(contributors.data);
         } catch (error) {
             setIsRepoPrivate(true);
             console.error('Error fetching repository details:', error);
@@ -192,6 +204,19 @@ const RepoDetails = () => {
                             </div>
                         </div>
                     )}
+
+                    <h1 className='font-bold mt-10'>
+                        CONTRIBUTORS OF THE REPO
+                    </h1>
+
+                    {repoContributors.map((contributor: any) => {
+                        return (
+                            <ContributorDetails
+                                key={contributor.id}
+                                user={contributor}
+                            />
+                        );
+                    })}
 
                     {/* FOOTER SECTION  */}
                     <footer className='mt-6 flex justify-end'>

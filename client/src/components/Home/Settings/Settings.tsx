@@ -10,11 +10,13 @@ import {
     toggleShowTag,
 } from '../../../redux/actionCreators';
 
-import { UserDetails } from '../../../redux/interfaces';
+import { UserDetailsInterface } from '../../../redux/interfaces';
 import { RootState } from '../../../redux/store';
 import KeyboardShortcuts from './KeyboardShortcuts';
 const Settings = () => {
-    const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // Store the user details
+    const [userDetails, setUserDetails] = useState<UserDetailsInterface | null>(
+        null
+    ); // Store the user details
 
     const sortingOrder = useSelector((state: RootState) => state.sortingOrder);
     const isDarkModeOn = useSelector((state: RootState) => state.isDarkModeOn);
@@ -27,7 +29,7 @@ const Settings = () => {
 
     const disptach = useDispatch();
 
-    // Fetch the user details 
+    // Fetch the user details
     useEffect(() => {
         fetchUserDetails();
     }, []);

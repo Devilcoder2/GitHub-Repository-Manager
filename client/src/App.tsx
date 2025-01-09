@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Auth from './components/Auth/Auth';
 import AuthCallback from './components/Auth/AuthCallback';
-import AddNewRepo from './components/Home/Repositories/AddNewRepo';
 import AiCodeReview from './components/Home/AICodeReview/AICodeReview';
 import CloudSecurity from './components/Home/CloudSecurity/CloudSecurity';
 import HowToUse from './components/Home/HowToUse/HowToUse';
 import Layout from './components/Home/Layout';
-import RepoDetails from './components/Home/Repositories/RepoDetails';
+import AddNewRepo from './components/Home/Repositories/AddNewRepo';
 import Dashboard from './components/Home/Repositories/Dashboard';
+import RepoDetails from './components/Home/Repositories/RepoDetails';
 import Settings from './components/Home/Settings/Settings';
 import {
     changeSortingOrder,
@@ -19,6 +19,7 @@ import {
     toggleShowTag,
 } from './redux/actionCreators';
 import { RootState } from './redux/store';
+import UserDetails from './components/User/UserDetails';
 
 function App() {
     //STATES FOR MANAGING AUTHENTICATION
@@ -112,6 +113,7 @@ function App() {
                     <Route path='/how-to-use' element={<HowToUse />} />
                     <Route path='/add-repo' element={<AddNewRepo />} />
                     <Route path='/repo-details/:id' element={<RepoDetails />} />
+                    <Route path='/user-details/:id' element={<UserDetails />} />
                 </Route>
             </Routes>
         </BrowserRouter>

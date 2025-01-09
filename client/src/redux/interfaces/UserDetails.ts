@@ -1,4 +1,4 @@
-interface UserDetails {
+interface UserDetailsInterface {
     avatar_url: string;
     bio: string;
     created_at: string;
@@ -17,4 +17,4 @@ interface UserDetails {
     };
 }
 
-export type { UserDetails };
+export type { UserDetailsInterface };
