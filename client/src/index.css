@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,6 +7,8 @@
 /* Custom styles */
 body {
     @apply min-h-screen bg-[#FAFAFA];
+    font-family: 'Vazirmatn', serif;
+    font-weight: 300;
 }
 
 body.dark {
@@ -22,14 +26,14 @@ body.dark {
 .prose h4,
 .prose h5,
 .prose h6 {
-    font-size: 2rem; 
+    font-size: 2rem;
     text-transform: uppercase;
-    margin-bottom: 1.5rem; 
+    margin-bottom: 1.5rem;
 }
 
 /* For increased spacing between elements - AI CODE REVIEW SECTION  */
 .prose p {
-    margin-bottom: 1.2rem; 
+    margin-bottom: 1.2rem;
 }
 
 .prose ul,
@@ -45,13 +49,13 @@ body.dark {
 /* For code in light mode */
 .prose code {
     background-color: #f4f4f4;
-    color: #d9534f; 
-    padding: 0.2rem 0.4rem; 
-    border-radius: 4px; 
+    color: #d9534f;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
 }
 
 /* For code in dark mode */
 .dark .prose code {
-    background-color: #383838; 
-    color: #d9534f; 
+    background-color: #383838;
+    color: #d9534f;
 }
