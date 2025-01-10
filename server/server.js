@@ -229,6 +229,48 @@ app.get('/repo/:owner/:repo/readme', async (req, res) => {
     }
 });
 
+// FETCH COMMITS OVER TIME
+app.get('/repo/:owner/:repo/commits', async (req, res) => {
+    const { owner, repo } = req.params;
+
+    try {
+        const response = await axios.get(
+            `https://api.github.com/repos/${owner}/${repo}/commits`,
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                },
+            }
+        );
+
+        // Group commits by date
+        const commitsByDate = response.data.reduce((acc, commit) => {
+            const date = new Date(commit.commit.author.date)
+                .toISOString()
+                .split('T')[0]; // Format as YYYY-MM-DD
+            acc[date] = (acc[date] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Format the result as an array of { date, count } for graph plotting
+        const formattedData = Object.keys(commitsByDate).map((date) => ({
+            date,
+            count: commitsByDate[date],
+        }));
+
+        res.status(200).json(formattedData);
+    } catch (error) {
+        console.error(
+            'Error fetching commits:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to fetch commits',
+            details: error.response?.data,
+        });
+    }
+});
+
 //AI CODE REVIEW
 app.post('/codeReview', async (req, res) => {
     const { codeSnippet } = req.body;

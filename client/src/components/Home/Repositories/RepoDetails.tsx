@@ -8,6 +8,7 @@ import { BASE_URL, convertToPercentages } from '../../../helper';
 import { RootState } from '../../../redux/store';
 import ContributorDetails from './ContributorDetails';
 import RepoReadme from './RepoReadme';
+import RepoCommitGraph from './RepoCommitGraph';
 
 const RepoDetails = () => {
     const { id } = useParams<{ id: string }>(); // Get the repository ID from the URL
@@ -239,6 +240,7 @@ const RepoDetails = () => {
                     </button>
                 </div>
                 {/* owner.login name */}
+                <RepoCommitGraph owner={owner.login} name={name} />
                 <RepoReadme owner={owner.login} name={name} />
             </div>
         </div>
