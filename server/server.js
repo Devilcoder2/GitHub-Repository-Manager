@@ -271,6 +271,41 @@ app.get('/repo/:owner/:repo/commits', async (req, res) => {
     }
 });
 
+// FETCH VISITORS DATA FOR A REPOSITORY
+app.get('/repo/:owner/:repo/visitors', async (req, res) => {
+    const { owner, repo } = req.params;
+
+    try {
+        const response = await axios.get(
+            `https://api.github.com/repos/${owner}/${repo}/traffic/views`,
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                    Accept: 'application/vnd.github.v3+json',
+                },
+            }
+        );
+
+        const views = response.data.views;
+
+        const formattedData = views.map((view) => ({
+            date: view.timestamp.split('T')[0], // Format as YYYY-MM-DD
+            count: view.uniques,
+        }));
+
+        res.status(200).json(formattedData);
+    } catch (error) {
+        console.error(
+            'Error fetching visitors data:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to fetch visitors data',
+            details: error.response?.data,
+        });
+    }
+});
+
 //AI CODE REVIEW
 app.post('/codeReview', async (req, res) => {
     const { codeSnippet } = req.body;

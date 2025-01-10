@@ -26,24 +26,24 @@ ChartJS.register(
     Legend
 );
 
-interface RepoCommitGraphProps {
+interface RepoVisitorGraphProps {
     owner: string;
     name: string;
 }
 
-interface CommitData {
+interface VisitorData {
     date: string;
     count: number;
 }
 
-const RepoCommitGraph: React.FC<RepoCommitGraphProps> = ({ owner, name }) => {
-    const [commitData, setCommitData] = useState<CommitData[]>([]);
+const RepoVisitorGraph: React.FC<RepoVisitorGraphProps> = ({ owner, name }) => {
+    const [visitorsData, setVisitorsData] = useState<VisitorData[]>([]);
     const [chartType, setChartType] = useState<'line' | 'bar'>('line');
 
-    const fetchCommitData = async () => {
+    const fetchVisitorsData = async () => {
         try {
-            const commitResponse = await axios.get(
-                `${BASE_URL}/repo/${owner}/${name}/commits`,
+            const response = await axios.get(
+                `${BASE_URL}/repo/${owner}/${name}/visitors`,
                 {
                     headers: {
                         Authorization: `${localStorage.getItem('accessToken')}`,
@@ -51,25 +51,25 @@ const RepoCommitGraph: React.FC<RepoCommitGraphProps> = ({ owner, name }) => {
                 }
             );
 
-            setCommitData(commitResponse.data);
+            setVisitorsData(response.data);
         } catch (error) {
-            console.error('Error fetching commit data:', error);
+            console.error('Error fetching visitor data:', error);
         }
     };
 
     useEffect(() => {
-        fetchCommitData();
+        fetchVisitorsData();
     }, []);
 
     // Prepare chart data
     const chartData = {
-        labels: commitData.map((item) => item.date), // X-axis labels
+        labels: visitorsData.map((item) => item.date),
         datasets: [
             {
-                label: 'Commits Over Time',
-                data: commitData.map((item) => item.count), // Y-axis data
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                label: 'Unique Visitors Over Time',
+                data: visitorsData.map((item) => item.count),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1,
                 tension: 0.4,
             },
@@ -84,7 +84,7 @@ const RepoCommitGraph: React.FC<RepoCommitGraphProps> = ({ owner, name }) => {
             },
             title: {
                 display: true,
-                text: 'Commits Over Time',
+                text: 'Unique Visitors Over Time',
             },
         },
         scales: {
@@ -97,7 +97,7 @@ const RepoCommitGraph: React.FC<RepoCommitGraphProps> = ({ owner, name }) => {
             y: {
                 title: {
                     display: true,
-                    text: 'Commit Count',
+                    text: 'Visitor Count',
                 },
                 beginAtZero: true,
             },
@@ -106,7 +106,7 @@ const RepoCommitGraph: React.FC<RepoCommitGraphProps> = ({ owner, name }) => {
 
     return (
         <div className='my-28'>
-            <h1>COMMITS OVER TIME</h1>
+            <h1>UNIQUE VISITORS OVER TIME</h1>
 
             {/* Toggle Button */}
             <div style={{ marginBottom: '20px' }}>
@@ -142,7 +142,9 @@ const RepoCommitGraph: React.FC<RepoCommitGraphProps> = ({ owner, name }) => {
             </div>
 
             {/* Render Chart */}
-            {chartType === 'line' ? (
+            {visitorsData.length === 0 ? (
+                'No Visitors on this repo...'
+            ) : chartType === 'line' ? (
                 <Line data={chartData} options={options} />
             ) : (
                 <Bar data={chartData} options={options} />
@@ -151,4 +153,4 @@ const RepoCommitGraph: React.FC<RepoCommitGraphProps> = ({ owner, name }) => {
     );
 };
 
-export default RepoCommitGraph;
+export default RepoVisitorGraph;

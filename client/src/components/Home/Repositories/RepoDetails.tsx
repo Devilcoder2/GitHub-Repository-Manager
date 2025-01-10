@@ -9,6 +9,7 @@ import { RootState } from '../../../redux/store';
 import ContributorDetails from './ContributorDetails';
 import RepoReadme from './RepoReadme';
 import RepoCommitGraph from './RepoCommitGraph';
+import RepoVisitorGraph from './RepoVisitorGraph';
 
 const RepoDetails = () => {
     const { id } = useParams<{ id: string }>(); // Get the repository ID from the URL
@@ -241,6 +242,7 @@ const RepoDetails = () => {
                 </div>
                 {/* owner.login name */}
                 <RepoCommitGraph owner={owner.login} name={name} />
+                <RepoVisitorGraph owner={owner.login} name={name} />
                 <RepoReadme owner={owner.login} name={name} />
             </div>
         </div>
