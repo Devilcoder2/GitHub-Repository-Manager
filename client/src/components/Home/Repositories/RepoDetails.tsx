@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -8,6 +7,7 @@ import { SyncLoader } from 'react-spinners';
 import { BASE_URL, convertToPercentages } from '../../../helper';
 import { RootState } from '../../../redux/store';
 import ContributorDetails from './ContributorDetails';
+import RepoReadme from './RepoReadme';
 
 const RepoDetails = () => {
     const { id } = useParams<{ id: string }>(); // Get the repository ID from the URL
@@ -28,6 +28,7 @@ const RepoDetails = () => {
                 },
             });
 
+            console.log('REPO DETAILS:', response.data);
             // Fetch the languages
             const languages = await axios.get(response.data.languages_url);
 
@@ -94,6 +95,7 @@ const RepoDetails = () => {
         size,
         visibility,
         html_url,
+        owner,
     } = repoDetails;
 
     return (
@@ -236,6 +238,8 @@ const RepoDetails = () => {
                         DELETE REPO
                     </button>
                 </div>
+                {/* owner.login name */}
+                <RepoReadme owner={owner.login} name={name} />
             </div>
         </div>
     );

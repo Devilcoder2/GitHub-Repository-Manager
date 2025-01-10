@@ -189,6 +189,46 @@ app.delete('/repo/:id', async (req, res) => {
     }
 });
 
+// FETCH README.md FILE
+app.get('/repo/:owner/:repo/readme', async (req, res) => {
+    const { owner, repo } = req.params;
+
+    try {
+        const response = await axios.get(
+            `https://api.github.com/repos/${owner}/${repo}/readme`,
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                    Accept: 'application/vnd.github.v3+json',
+                },
+            }
+        );
+
+        // Decode the base64 content
+        const decodedContent = Buffer.from(
+            response.data.content,
+            'base64'
+        ).toString('utf8');
+
+        res.status(200).json({
+            name: response.data.name,
+            path: response.data.path,
+            size: response.data.size,
+            content: decodedContent,
+            html_url: response.data.html_url,
+        });
+    } catch (error) {
+        console.error(
+            'Error fetching README file:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to fetch README file',
+            details: error.response?.data,
+        });
+    }
+});
+
 //AI CODE REVIEW
 app.post('/codeReview', async (req, res) => {
     const { codeSnippet } = req.body;
