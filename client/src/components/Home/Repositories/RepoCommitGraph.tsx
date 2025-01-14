@@ -51,7 +51,7 @@ const RepoCommitGraph: React.FC<RepoCommitGraphProps> = ({ owner, name }) => {
                 }
             );
 
-            setCommitData(commitResponse.data);
+            setCommitData([...commitResponse.data].reverse());
         } catch (error) {
             console.error('Error fetching commit data:', error);
         }

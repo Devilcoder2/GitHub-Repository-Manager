@@ -5,7 +5,7 @@ import { BASE_URL } from '../../../helper';
 const RenameRepo = ({ owner, name, fetchRepoDetails }: { owner: string; name: string; fetchRepoDetails: (id: number) => void }) => {
     const [newName, setNewName] = useState<string>('');
 
-    const fetchCommitData = async () => {
+    const renameRepoHandler = async () => {
         try {
             const response = await axios.patch(
                 `${BASE_URL}/repo/${owner}/${name}/rename`,
@@ -19,7 +19,6 @@ const RenameRepo = ({ owner, name, fetchRepoDetails }: { owner: string; name: st
                 }
             );
 
-            console.log('REPO RENAMED:', response.data);
             fetchRepoDetails(response.data.repository.id);
         } catch (error) {
             console.error('Error fetching commit data:', error);
@@ -34,7 +33,7 @@ const RenameRepo = ({ owner, name, fetchRepoDetails }: { owner: string; name: st
                 className='w-full p-2 border rounded-md border-black'    
                 onChange={(e) => setNewName(e.target.value)}
             />
-            <button onClick={fetchCommitData}>Rename</button>
+            <button onClick={renameRepoHandler}>Rename</button>
         </div>
     );
 };
