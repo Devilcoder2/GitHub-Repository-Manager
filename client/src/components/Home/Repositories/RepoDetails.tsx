@@ -13,6 +13,8 @@ import RepoReadme from './RepoReadme';
 import RepoVisitorGraph from './RepoVisitorGraph';
 import ToggleVisibility from './ToggleVisibility';
 import ToggleArchived from './ToggleArchived';
+import ChangeDefaultBranch from './ChangeDefaultBranch';
+import CreateNewBranch from './CreateNewBranch';
 
 const RepoDetails = () => {
     const { id } = useParams<{ id: string }>(); // Get the repository ID from the URL
@@ -20,6 +22,7 @@ const RepoDetails = () => {
     const [languages, setLanguages] = useState<any>(null); // Store the languages used in the repository
     const [isRepoPrivate, setIsRepoPrivate] = useState(false); // Check if the repository is private
     const [repoContributors, setRepoContributors] = useState<any>([]); // Store the repository contributors
+    const [refetchAllBranches, setRefetchAllBranches] = useState<boolean>(false);
 
     const isDarkModeOn = useSelector((store: RootState) => store.isDarkModeOn);
 
@@ -244,10 +247,14 @@ const RepoDetails = () => {
                     </button>
                 </div>
 
+                <CreateNewBranch owner={owner.login} name={name}  setRefetch={setRefetchAllBranches}/>
+
                 <RenameRepo owner={owner.login} name={name} fetchRepoDetails={fetchRepoDetails} />
                 <ToggleVisibility owner={owner.login} name={name} currentVisibility={visibility} fetchRepoDetails={fetchRepoDetails} />
 
                 <ToggleArchived owner={owner.login} name={name} currentArchived={archived} fetchRepoDetails={fetchRepoDetails} />
+
+                <ChangeDefaultBranch owner={owner.login} name={name} fetchRepoDetails={fetchRepoDetails} refetch={refetchAllBranches}/>
 
                 {/* TODO: TOGGLE FORKING ONLY WORKS FOR ORGS REPO AND NOT FOR USER REPO 
                     SO SHOW TOGGLE FORKING ONLY IF THE REPO IS AN ORG REPO

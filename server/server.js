@@ -471,6 +471,170 @@ app.post('/codeReview', async (req, res) => {
     }
 });
 
+// LIST ALL BRANCHES OF A REPOSITORY
+app.get('/repo/:owner/:repo/branches', async (req, res) => {
+    const { owner, repo } = req.params;
+
+    try {
+        const response = await axios.get(
+            `https://api.github.com/repos/${owner}/${repo}/branches`,
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                    Accept: 'application/vnd.github.v3+json',
+                },
+            }
+        );
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error(
+            'Error fetching branches:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to fetch branches',
+            details: error.response?.data,
+        });
+    }
+});
+
+// CHANGE DEFAULT BRANCH OF A REPOSITORY
+app.patch('/repo/:owner/:repo/default-branch', async (req, res) => {
+    const { owner, repo } = req.params;
+    const { branch } = req.body;
+
+    if (!branch) {
+        return res
+            .status(400)
+            .json({ error: 'New default branch name is required' });
+    }
+
+    try {
+        const response = await axios.patch(
+            `https://api.github.com/repos/${owner}/${repo}`,
+            {
+                default_branch: branch,
+            },
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                    Accept: 'application/vnd.github.v3+json',
+                },
+            }
+        );
+
+        res.status(200).json({
+            message: `Default branch changed to ${branch}`,
+            repository: response.data,
+        });
+    } catch (error) {
+        console.error(
+            'Error changing default branch:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to change default branch',
+            details: error.response?.data,
+        });
+    }
+});
+
+// CREATE A NEW BRANCH
+app.post('/repo/:owner/:repo/branches', async (req, res) => {
+    const { owner, repo } = req.params;
+    const { newBranch, baseBranch } = req.body;
+
+    if (!newBranch || !baseBranch) {
+        return res.status(400).json({
+            error: 'New branch name and base branch name are required',
+        });
+    }
+
+    try {
+        const url = `https://api.github.com/repos/${owner}/${repo}/git/refs/heads/${baseBranch}`;
+        const headers = {
+            Authorization: `Bearer ${req.headers.authorization}`,
+            Accept: 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json',
+        };
+
+        const baseRef = await axios.get(url, { headers });
+
+        // Create new branch using the SHA of base branch
+        const response = await axios.post(
+            `https://api.github.com/repos/${owner}/${repo}/git/refs`,
+            {
+                ref: `refs/heads/${newBranch}`,
+                sha: baseRef.data.object.sha,
+            },
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                    Accept: 'application/vnd.github.v3+json',
+                },
+            }
+        );
+
+        res.status(201).json({
+            message: `Branch '${newBranch}' created successfully`,
+            branch: response.data,
+        });
+    } catch (error) {
+        console.error('Full error:', {
+            message: error.message,
+            code: error.code,
+            stack: error.stack,
+            response: {
+                status: error.response?.status,
+                statusText: error.response?.statusText,
+                data: error.response?.data,
+            },
+            request: {
+                url: error.config?.url,
+                method: error.config?.method,
+                headers: error.config?.headers,
+            },
+        });
+
+        res.status(500).json({
+            error: 'Failed to create new branch',
+            message: error.message,
+            details: error.response?.data || 'Network or connection error',
+        });
+    }
+});
+
+// FETCH DEFAULT BRANCH OF A REPOSITORY
+app.get('/repo/:owner/:repo/default-branch', async (req, res) => {
+    const { owner, repo } = req.params;
+
+    try {
+        const response = await axios.get(
+            `https://api.github.com/repos/${owner}/${repo}`,
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                    Accept: 'application/vnd.github.v3+json',
+                },
+            }
+        );
+
+        res.status(200).json({
+            default_branch: response.data.default_branch,
+        });
+    } catch (error) {
+        console.error(
+            'Error fetching default branch:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to fetch default branch',
+            details: error.response?.data,
+        });
+    }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
