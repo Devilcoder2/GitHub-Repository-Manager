@@ -12,6 +12,7 @@ import RepoCommitGraph from './RepoCommitGraph';
 import RepoReadme from './RepoReadme';
 import RepoVisitorGraph from './RepoVisitorGraph';
 import ToggleVisibility from './ToggleVisibility';
+import ToggleArchived from './ToggleArchived';
 
 const RepoDetails = () => {
     const { id } = useParams<{ id: string }>(); // Get the repository ID from the URL
@@ -242,9 +243,11 @@ const RepoDetails = () => {
                         DELETE REPO
                     </button>
                 </div>
-                {/* owner.login name */}
+
                 <RenameRepo owner={owner.login} name={name} fetchRepoDetails={fetchRepoDetails} />
                 <ToggleVisibility owner={owner.login} name={name} currentVisibility={visibility} fetchRepoDetails={fetchRepoDetails} />
+
+                <ToggleArchived owner={owner.login} name={name} currentArchived={archived} fetchRepoDetails={fetchRepoDetails} />
 
                 {/* TODO: TOGGLE FORKING ONLY WORKS FOR ORGS REPO AND NOT FOR USER REPO 
                     SO SHOW TOGGLE FORKING ONLY IF THE REPO IS AN ORG REPO

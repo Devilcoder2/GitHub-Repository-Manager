@@ -421,6 +421,43 @@ app.patch('/repo/:owner/:repo/forking', async (req, res) => {
     }
 });
 
+// TOGGLE REPOSITORY ARCHIVE STATUS
+app.patch('/repo/:owner/:repo/archive', async (req, res) => {
+    const { owner, repo } = req.params;
+    const { archived } = req.body;
+
+    try {
+        const response = await axios.patch(
+            `https://api.github.com/repos/${owner}/${repo}`,
+            {
+                archived: archived,
+            },
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                    Accept: 'application/vnd.github.v3+json',
+                },
+            }
+        );
+
+        res.status(200).json({
+            message: `Repository ${
+                archived ? 'archived' : 'unarchived'
+            } successfully`,
+            repository: response.data,
+        });
+    } catch (error) {
+        console.error(
+            'Error toggling repository archive status:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to toggle repository archive status',
+            details: error.response?.data,
+        });
+    }
+});
+
 //AI CODE REVIEW
 app.post('/codeReview', async (req, res) => {
     const { codeSnippet } = req.body;
