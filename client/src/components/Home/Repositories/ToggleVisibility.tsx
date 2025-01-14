@@ -9,7 +9,7 @@ interface ChangeVisibilityProps {
     fetchRepoDetails: (id: number) => void;
 }
 
-const ChangeVisibility: React.FC<ChangeVisibilityProps> = ({
+const ToggleVisibility: React.FC<ChangeVisibilityProps> = ({
     owner,
     name,
     currentVisibility,
@@ -69,4 +69,4 @@ const ChangeVisibility: React.FC<ChangeVisibilityProps> = ({
     );
 };
 
-export default ChangeVisibility;
+export default ToggleVisibility;

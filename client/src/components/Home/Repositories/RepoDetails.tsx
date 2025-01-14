@@ -7,11 +7,11 @@ import { SyncLoader } from 'react-spinners';
 import { BASE_URL, convertToPercentages } from '../../../helper';
 import { RootState } from '../../../redux/store';
 import ContributorDetails from './ContributorDetails';
-import RepoReadme from './RepoReadme';
-import RepoCommitGraph from './RepoCommitGraph';
-import RepoVisitorGraph from './RepoVisitorGraph';
 import RenameRepo from './RenameRepo';
-import ChangeVisibility from './ChangeVisibility';
+import RepoCommitGraph from './RepoCommitGraph';
+import RepoReadme from './RepoReadme';
+import RepoVisitorGraph from './RepoVisitorGraph';
+import ToggleVisibility from './ToggleVisibility';
 
 const RepoDetails = () => {
     const { id } = useParams<{ id: string }>(); // Get the repository ID from the URL
@@ -244,7 +244,12 @@ const RepoDetails = () => {
                 </div>
                 {/* owner.login name */}
                 <RenameRepo owner={owner.login} name={name} fetchRepoDetails={fetchRepoDetails} />
-                <ChangeVisibility owner={owner.login} name={name} currentVisibility={visibility} fetchRepoDetails={fetchRepoDetails} />
+                <ToggleVisibility owner={owner.login} name={name} currentVisibility={visibility} fetchRepoDetails={fetchRepoDetails} />
+
+                {/* TODO: TOGGLE FORKING ONLY WORKS FOR ORGS REPO AND NOT FOR USER REPO 
+                    SO SHOW TOGGLE FORKING ONLY IF THE REPO IS AN ORG REPO
+                */}
+                {/* <ToggleForking owner={owner.login} name={name} currentForking={allow_forking} fetchRepoDetails={fetchRepoDetails} /> */}
                 <RepoCommitGraph owner={owner.login} name={name} />
                 <RepoVisitorGraph owner={owner.login} name={name} />
                 <RepoReadme owner={owner.login} name={name} />

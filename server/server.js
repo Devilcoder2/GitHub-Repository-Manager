@@ -312,14 +312,16 @@ app.patch('/repo/:owner/:repo/rename', async (req, res) => {
     const { newName } = req.body;
 
     if (!newName) {
-        return res.status(400).json({ error: 'New repository name is required' });
+        return res
+            .status(400)
+            .json({ error: 'New repository name is required' });
     }
 
     try {
         const response = await axios.patch(
             `https://api.github.com/repos/${owner}/${repo}`,
             {
-                name: newName
+                name: newName,
             },
             {
                 headers: {
@@ -331,13 +333,16 @@ app.patch('/repo/:owner/:repo/rename', async (req, res) => {
 
         res.status(200).json({
             message: 'Repository renamed successfully',
-            repository: response.data
+            repository: response.data,
         });
     } catch (error) {
-        console.error('Error renaming repository:', error.response?.data || error.message);
+        console.error(
+            'Error renaming repository:',
+            error.response?.data || error.message
+        );
         res.status(500).json({
             error: 'Failed to rename repository',
-            details: error.response?.data
+            details: error.response?.data,
         });
     }
 });
@@ -351,7 +356,7 @@ app.patch('/repo/:owner/:repo/visibility', async (req, res) => {
         const response = await axios.patch(
             `https://api.github.com/repos/${owner}/${repo}`,
             {
-                private: private
+                private: private,
             },
             {
                 headers: {
@@ -362,14 +367,56 @@ app.patch('/repo/:owner/:repo/visibility', async (req, res) => {
         );
 
         res.status(200).json({
-            message: `Repository visibility changed to ${private ? 'private' : 'public'}`,
-            repository: response.data
+            message: `Repository visibility changed to ${
+                private ? 'private' : 'public'
+            }`,
+            repository: response.data,
         });
     } catch (error) {
-        console.error('Error changing repository visibility:', error.response?.data || error.message);
+        console.error(
+            'Error changing repository visibility:',
+            error.response?.data || error.message
+        );
         res.status(500).json({
             error: 'Failed to change repository visibility',
-            details: error.response?.data
+            details: error.response?.data,
+        });
+    }
+});
+
+// TOGGLE REPOSITORY FORKING
+app.patch('/repo/:owner/:repo/forking', async (req, res) => {
+    const { owner, repo } = req.params;
+    const { allowForking } = req.body;
+
+    try {
+        const response = await axios.patch(
+            `https://api.github.com/repos/${owner}/${repo}`,
+            {
+                allow_forking: allowForking,
+            },
+            {
+                headers: {
+                    Authorization: `token ${req.headers.authorization}`,
+                    Accept: 'application/vnd.github.v3+json',
+                },
+            }
+        );
+
+        res.status(200).json({
+            message: `Repository forking ${
+                allowForking ? 'enabled' : 'disabled'
+            }`,
+            repository: response.data,
+        });
+    } catch (error) {
+        console.error(
+            'Error toggling repository forking:',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            error: 'Failed to toggle repository forking',
+            details: error.response?.data,
         });
     }
 });
