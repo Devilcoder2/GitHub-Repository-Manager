@@ -15,6 +15,7 @@ import ToggleVisibility from './ToggleVisibility';
 import ToggleArchived from './ToggleArchived';
 import ChangeDefaultBranch from './ChangeDefaultBranch';
 import CreateNewBranch from './CreateNewBranch';
+import ShowLanguages from './ShowLanguages';
 
 const RepoDetails = () => {
     const { id } = useParams<{ id: string }>(); // Get the repository ID from the URL
@@ -190,30 +191,7 @@ const RepoDetails = () => {
                     </div>
 
                     {/* SHOWS THE LANGUAGES USED IN THE REPOSITORY  */}
-                    {languages && (
-                        <div className='mt-6'>
-                            <h2 className='text-xl font-semibold mb-4'>
-                                Languages Used:
-                            </h2>
-                            <div className='space-y-2'>
-                                {Object.entries(languages).map(
-                                    ([language, percentage]) => (
-                                        <div
-                                            key={language}
-                                            className='flex justify-between items-center'
-                                        >
-                                            <span className='font-medium'>
-                                                {language}:
-                                            </span>
-                                            <span className='text-gray-600 dark:text-gray-400'>
-                                                {percentage as number}%
-                                            </span>
-                                        </div>
-                                    )
-                                )}
-                            </div>
-                        </div>
-                    )}
+                    <ShowLanguages languages={languages} />
 
                     <h1 className='font-bold mt-10'>
                         CONTRIBUTORS OF THE REPO
